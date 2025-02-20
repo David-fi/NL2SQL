@@ -1,0 +1,96 @@
+--datasets used for testing 
+--First dataset is a workplace manager 
+-- Departments table
+CREATE TABLE departments (
+  department_id INT PRIMARY KEY,
+  department_name VARCHAR(100),
+  location VARCHAR(100)
+);
+
+-- Employees table
+CREATE TABLE employees (
+  employee_id INT PRIMARY KEY,
+  first_name VARCHAR(50),
+  last_name VARCHAR(50),
+  department_id INT,
+  email VARCHAR(100),
+  phone VARCHAR(20),
+  hire_date DATE,
+  FOREIGN KEY (department_id) REFERENCES departments(department_id)
+);
+
+-- Salaries table
+CREATE TABLE salaries (
+  salary_id INT PRIMARY KEY,
+  employee_id INT,
+  amount DECIMAL(10,2),
+  effective_date DATE,
+  FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
+);
+
+-- Insert sample departments
+INSERT INTO departments (department_id, department_name, location) VALUES 
+  (1, 'Human Resources', 'New York'),
+  (2, 'Engineering', 'San Francisco'),
+  (3, 'Marketing', 'Chicago');
+
+-- Insert sample employees
+INSERT INTO employees (employee_id, first_name, last_name, department_id, email, phone, hire_date) VALUES 
+  (101, 'John', 'Doe', 2, 'john.doe@example.com', '123-456-7890', '2021-06-15'),
+  (102, 'Jane', 'Smith', 1, 'jane.smith@example.com', '234-567-8901', '2020-03-01');
+
+-- Insert sample salaries
+INSERT INTO salaries (salary_id, employee_id, amount, effective_date) VALUES 
+  (1, 101, 80000.00, '2021-06-15'),
+  (2, 101, 85000.00, '2022-06-15'),
+  (3, 102, 75000.00, '2020-03-01');
+
+
+--Second is an eccomerce dataset 
+
+-- Products table
+CREATE TABLE products (
+  product_id INT PRIMARY KEY,
+  product_name VARCHAR(100),
+  category VARCHAR(50),
+  price DECIMAL(10,2),
+  stock INT
+);
+
+-- Customers table
+CREATE TABLE customers (
+  customer_id INT PRIMARY KEY,
+  first_name VARCHAR(50),
+  last_name VARCHAR(50),
+  email VARCHAR(100),
+  phone VARCHAR(20),
+  address VARCHAR(150),
+  city VARCHAR(50),
+  state VARCHAR(50),
+  zip_code VARCHAR(10)
+);
+
+-- Orders table
+CREATE TABLE orders (
+  order_id INT PRIMARY KEY,
+  customer_id INT,
+  order_date DATE,
+  total_amount DECIMAL(10,2),
+  FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+
+-- Insert sample products
+INSERT INTO products (product_id, product_name, category, price, stock) VALUES 
+  (1, 'Smartphone', 'Electronics', 699.99, 50),
+  (2, 'Laptop', 'Electronics', 1299.99, 30),
+  (3, 'Headphones', 'Accessories', 199.99, 100);
+
+-- Insert sample customers
+INSERT INTO customers (customer_id, first_name, last_name, email, phone, address, city, state, zip_code) VALUES 
+  (201, 'Alice', 'Johnson', 'alice.johnson@example.com', '345-678-9012', '123 Main St', 'Metropolis', 'NY', '10001'),
+  (202, 'Bob', 'Williams', 'bob.williams@example.com', '456-789-0123', '456 Elm St', 'Gotham', 'NJ', '07001');
+
+-- Insert sample orders
+INSERT INTO orders (order_id, customer_id, order_date, total_amount) VALUES 
+  (301, 201, '2023-09-01', 899.98),
+  (302, 202, '2023-09-02', 1299.99);
