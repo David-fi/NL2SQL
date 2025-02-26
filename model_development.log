@@ -1,0 +1,52 @@
+2025-02-22 13:54:15,443 [INFO] Starting model development pipeline...
+2025-02-22 13:54:15,768 [INFO] Loaded 92499 examples from preprocessed data.
+2025-02-22 13:54:15,794 [INFO] Dataset split: 73999 train, 9250 dev, 9250 test examples.
+2025-02-22 13:54:16,043 [INFO] Wrote 73999 examples to /Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/dataSets/train.jsonl
+2025-02-22 13:54:16,074 [INFO] Wrote 9250 examples to /Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/dataSets/dev.jsonl
+2025-02-22 13:54:16,106 [INFO] Wrote 9250 examples to /Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/dataSets/test.jsonl
+2025-02-22 13:54:16,352 [INFO] Wrote 73999 examples to /Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/dataSets/openai_train.jsonl
+2025-02-22 13:54:16,352 [INFO] Uploading training file to OpenAI...
+2025-02-22 13:54:16,353 [DEBUG] Request options: {'method': 'post', 'url': '/files', 'headers': {'Content-Type': 'multipart/form-data'}, 'files': [('file', SerializationIterator(index=0, iterator=<_io.BufferedReader name='/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/dataSets/openai_train.jsonl'>))], 'json_data': {'purpose': 'fine-tune'}}
+2025-02-22 13:54:16,381 [DEBUG] Sending HTTP Request: POST https://api.openai.com/v1/files
+2025-02-22 13:54:16,382 [DEBUG] connect_tcp.started host='127.0.0.1' port=49156 local_address=None timeout=5.0 socket_options=None
+2025-02-22 13:54:16,382 [DEBUG] connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x302ea3470>
+2025-02-22 13:54:16,383 [DEBUG] send_request_headers.started request=<Request [b'CONNECT']>
+2025-02-22 13:54:16,383 [DEBUG] send_request_headers.complete
+2025-02-22 13:54:16,383 [DEBUG] send_request_body.started request=<Request [b'CONNECT']>
+2025-02-22 13:54:16,383 [DEBUG] send_request_body.complete
+2025-02-22 13:54:16,383 [DEBUG] receive_response_headers.started request=<Request [b'CONNECT']>
+2025-02-22 13:54:16,383 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [])
+2025-02-22 13:54:16,384 [DEBUG] start_tls.started ssl_context=<ssl.SSLContext object at 0x11297e9d0> server_hostname='api.openai.com' timeout=5.0
+2025-02-22 13:54:16,717 [DEBUG] start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x137b72840>
+2025-02-22 13:54:16,717 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2025-02-22 13:54:16,718 [DEBUG] send_request_headers.complete
+2025-02-22 13:54:16,718 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2025-02-22 13:54:17,943 [DEBUG] send_request_body.complete
+2025-02-22 13:54:17,943 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2025-02-22 13:54:20,453 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Sat, 22 Feb 2025 13:54:20 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'openai-version', b'2020-10-01'), (b'openai-organization', b'user-2dfcl6vuh10ss4eknf5t1st6'), (b'x-request-id', b'req_968c61fa49b6c69261ef33bff02d7b7e'), (b'openai-processing-ms', b'1032'), (b'access-control-allow-origin', b'*'), (b'strict-transport-security', b'max-age=31536000; includeSubDomains; preload'), (b'cf-cache-status', b'DYNAMIC'), (b'Set-Cookie', b'__cf_bm=iha9K7inzpFDdJCTFxWtwFznQFOFHQgiG2.lMJOYF44-1740232460-1.0.1.1-MOQ7x6Fs4RQpQdOmJNApLPozJMo7cM_20b6puL0SbZIiCjNq_kVx8hZ11Bh4LP4mIezNkC0x3h7BRht_Obf0vA; path=/; expires=Sat, 22-Feb-25 14:24:20 GMT; domain=.api.openai.com; HttpOnly; Secure; SameSite=None'), (b'X-Content-Type-Options', b'nosniff'), (b'Set-Cookie', b'_cfuvid=Eu00dEInyrWlYENNIBN2q_prj42.5xG5a.16iWGe0XA-1740232460527-0.0.1.1-604800000; path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None'), (b'Server', b'cloudflare'), (b'CF-RAY', b'915f77978f44558a-EWR'), (b'Content-Encoding', b'br'), (b'alt-svc', b'h3=":443"; ma=86400')])
+2025-02-22 13:54:20,456 [INFO] HTTP Request: POST https://api.openai.com/v1/files "HTTP/1.1 200 OK"
+2025-02-22 13:54:20,459 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2025-02-22 13:54:20,460 [DEBUG] receive_response_body.complete
+2025-02-22 13:54:20,460 [DEBUG] response_closed.started
+2025-02-22 13:54:20,460 [DEBUG] response_closed.complete
+2025-02-22 13:54:20,460 [DEBUG] HTTP Response: POST https://api.openai.com/v1/files "200 OK" Headers([('date', 'Sat, 22 Feb 2025 13:54:20 GMT'), ('content-type', 'application/json'), ('transfer-encoding', 'chunked'), ('connection', 'keep-alive'), ('openai-version', '2020-10-01'), ('openai-organization', 'user-2dfcl6vuh10ss4eknf5t1st6'), ('x-request-id', 'req_968c61fa49b6c69261ef33bff02d7b7e'), ('openai-processing-ms', '1032'), ('access-control-allow-origin', '*'), ('strict-transport-security', 'max-age=31536000; includeSubDomains; preload'), ('cf-cache-status', 'DYNAMIC'), ('set-cookie', '__cf_bm=iha9K7inzpFDdJCTFxWtwFznQFOFHQgiG2.lMJOYF44-1740232460-1.0.1.1-MOQ7x6Fs4RQpQdOmJNApLPozJMo7cM_20b6puL0SbZIiCjNq_kVx8hZ11Bh4LP4mIezNkC0x3h7BRht_Obf0vA; path=/; expires=Sat, 22-Feb-25 14:24:20 GMT; domain=.api.openai.com; HttpOnly; Secure; SameSite=None'), ('x-content-type-options', 'nosniff'), ('set-cookie', '_cfuvid=Eu00dEInyrWlYENNIBN2q_prj42.5xG5a.16iWGe0XA-1740232460527-0.0.1.1-604800000; path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None'), ('server', 'cloudflare'), ('cf-ray', '915f77978f44558a-EWR'), ('content-encoding', 'br'), ('alt-svc', 'h3=":443"; ma=86400')])
+2025-02-22 13:54:20,461 [DEBUG] request_id: req_968c61fa49b6c69261ef33bff02d7b7e
+2025-02-22 13:54:20,464 [INFO] Uploaded training file: file-UGS5fZAtLKeZcQZP9XhqRT
+2025-02-22 13:54:20,464 [INFO] Starting fine-tuning job...
+2025-02-22 13:54:20,467 [DEBUG] Request options: {'method': 'post', 'url': '/fine_tuning/jobs', 'files': None, 'json_data': {'model': 'gpt-4o-mini-2024-07-18', 'training_file': 'file-UGS5fZAtLKeZcQZP9XhqRT', 'method': {'type': 'supervised', 'supervised': {'hyperparameters': {'n_epochs': 3, 'learning_rate_multiplier': 0.1}}}}}
+2025-02-22 13:54:20,468 [DEBUG] Sending HTTP Request: POST https://api.openai.com/v1/fine_tuning/jobs
+2025-02-22 13:54:20,468 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2025-02-22 13:54:20,468 [DEBUG] send_request_headers.complete
+2025-02-22 13:54:20,469 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2025-02-22 13:54:20,469 [DEBUG] send_request_body.complete
+2025-02-22 13:54:20,469 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2025-02-22 13:54:21,485 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Sat, 22 Feb 2025 13:54:21 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'openai-version', b'2020-10-01'), (b'openai-organization', b'user-2dfcl6vuh10ss4eknf5t1st6'), (b'x-request-id', b'req_7a2909a3469694cc964c17ceb485fd5d'), (b'openai-processing-ms', b'738'), (b'strict-transport-security', b'max-age=31536000; includeSubDomains; preload'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Content-Type-Options', b'nosniff'), (b'Server', b'cloudflare'), (b'CF-RAY', b'915f77aefadc558a-EWR'), (b'Content-Encoding', b'br'), (b'alt-svc', b'h3=":443"; ma=86400')])
+2025-02-22 13:54:21,488 [INFO] HTTP Request: POST https://api.openai.com/v1/fine_tuning/jobs "HTTP/1.1 200 OK"
+2025-02-22 13:54:21,488 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2025-02-22 13:54:21,489 [DEBUG] receive_response_body.complete
+2025-02-22 13:54:21,489 [DEBUG] response_closed.started
+2025-02-22 13:54:21,489 [DEBUG] response_closed.complete
+2025-02-22 13:54:21,490 [DEBUG] HTTP Response: POST https://api.openai.com/v1/fine_tuning/jobs "200 OK" Headers({'date': 'Sat, 22 Feb 2025 13:54:21 GMT', 'content-type': 'application/json', 'transfer-encoding': 'chunked', 'connection': 'keep-alive', 'openai-version': '2020-10-01', 'openai-organization': 'user-2dfcl6vuh10ss4eknf5t1st6', 'x-request-id': 'req_7a2909a3469694cc964c17ceb485fd5d', 'openai-processing-ms': '738', 'strict-transport-security': 'max-age=31536000; includeSubDomains; preload', 'cf-cache-status': 'DYNAMIC', 'x-content-type-options': 'nosniff', 'server': 'cloudflare', 'cf-ray': '915f77aefadc558a-EWR', 'content-encoding': 'br', 'alt-svc': 'h3=":443"; ma=86400'})
+2025-02-22 13:54:21,490 [DEBUG] request_id: req_7a2909a3469694cc964c17ceb485fd5d
+2025-02-22 13:54:21,505 [INFO] Fine-tuning job started: ftjob-xnQ8Zyr5gYcVZ8qngX5hV8iD
+2025-02-22 13:54:21,562 [INFO] MySQL connection established.
