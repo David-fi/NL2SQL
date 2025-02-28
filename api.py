@@ -25,29 +25,22 @@ model_client = ModelClient(openai_client, fine_tuned_model, mysql_config)
 
 @app.route('/api/generate-query', methods=['POST'])
 def generate_query():
-    # Check the dataset file is uploaded 
+    # Check if the dataset file is uploaded
     if 'dataset' not in request.files:
         return "No dataset file provided", 400
     dataset_file = request.files['dataset']
-    #also check for a question 
+
+    # Also check for a question
     question = request.form.get('question')
     if not question:
         return "No question provided", 400
 
-    # temporarily save the uploaded dataset file 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(dataset_file.filename)[1]) as temp:
-        dataset_file.save(temp.name)
-        dataset_path = temp.name
-
     try:
-        # ModelClient extractes the schema from the dataset and generate the SQL query
-        sql_query = model_client.query(dataset_path, question)
+        # Directly pass the file object and filename to query
+        sql_query = model_client.query(dataset_file, question, filename=dataset_file.filename)
         return jsonify({"query": sql_query})
     except Exception as e:
         return f"Generate Query Error: {str(e)}", 500
-    finally:
-        # Remove the temporary file after processing
-        os.remove(dataset_path)
 
 @app.route('/api/execute-query', methods=['POST'])
 def execute_query():

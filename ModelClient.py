@@ -29,34 +29,33 @@ class ModelClient:
             print("MySQL connection error:", err)
             return None
 
-    def query(self, dataset_path, user_question, max_tokens=150, temperature=0.0, stop=None):
+    def query(self, dataset, user_question, max_tokens=150, temperature=0.0, stop=None, filename=None):
         """
-        Extract the schema from the dataset, append it to the system message to give context 
-        then ask the model for a SQL query based on the user's question
+        Extract the schema from the dataset (file path or uploaded file), append it to the system message to give context 
+        then ask the model for a SQL query based on the user's question.
         parameters:
-        dataset_path: Path to the dataset
+        dataset: File path OR uploaded file object
         user_question: The natural language question the user asks 
         max_tokens: max tokens in the response
         temperature: temp for the API call
-        stop: stop tokens 
-
+        stop: stop tokens
+        filename: The name of the uploaded file (needed for file objects)
+    
         returns the created SQL query
         """
-        #if stop is None:
-        #    stop = [""]
-
-        # Extract schema and append instruction.
-        schema_context =(f"{extract_schema(dataset_path)}\n\n"
+        # Extract schema from either file path or file object
+        schema_context = (
+            f"{extract_schema(dataset, filename=filename)}\n\n"
             "You are an expert SQL generator. Based on the above schema, generate a valid SQL query "
             "that answers the user's request. ONLY output the SQL query, nothing else."
-            )
-                
+        )
+
         # Create the messages list for the chat API
         messages = [
             {"role": "system", "content": schema_context},
             {"role": "user", "content": user_question}
         ]
-        
+    
         # Print the full prompt for debugging
         print("Full prompt sent to the model:")
         for msg in messages:
@@ -70,9 +69,9 @@ class ModelClient:
             temperature=temperature,
             stop=stop
         )
-        
+    
         # Extract the SQL query from the response
-        generated_sql = completion.choices[0].message.content #this assumes the possibility of a list of choices so take the first
+        generated_sql = completion.choices[0].message.content  # this assumes the possibility of a list of choices so take the first
         print("Generated SQL Query:")
         print(generated_sql)
         return generated_sql
