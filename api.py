@@ -25,6 +25,7 @@ model_client = ModelClient(openai_client, fine_tuned_model, mysql_config)
 
 @app.route('/api/generate-query', methods=['POST'])
 def generate_query():
+    print("Received request at /api/generate-query")
     # Check if the dataset file is uploaded
     if 'dataset' not in request.files:
         return "No dataset file provided", 400
@@ -38,8 +39,10 @@ def generate_query():
     try:
         # Directly pass the file object and filename to query
         sql_query = model_client.query(dataset_file, question, filename=dataset_file.filename)
+        print("SQL Query generated:", sql_query)
         return jsonify({"query": sql_query})
     except Exception as e:
+        print("Error during query generation:", e)
         return f"Generate Query Error: {str(e)}", 500
 
 @app.route('/api/execute-query', methods=['POST'])
@@ -57,4 +60,4 @@ def execute_query():
         return f"Execute Query Error: {str(e)}", 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port = 5001)
