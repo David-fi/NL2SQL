@@ -46,8 +46,10 @@ class ModelClient:
         # Extract schema from either file path or file object
         schema_context = (
             f"{extract_schema(dataset, filename=filename)}\n\n"
-            "You are an expert SQL generator. Based on the above schema, generate a valid SQL query "
-            "that answers the user's request. ONLY output the SQL query, nothing else."
+            "You are an expert SQL generator. Based on the above schema, generate a valid SQL query that answers the user's request. "
+            "However, if the user's query is ambiguous or refers to data not available in the schema, instead of a SQL query, "
+            "output a clarifying question asking the user for more details. ONLY output the SQL query or a clarifying question, nothing else."
+            
         )
 
         # Create the messages list for the chat API
