@@ -40,7 +40,7 @@ def generate_query():
         # Directly pass the file object and filename to query
         sql_query = model_client.query(dataset_file, question, filename=dataset_file.filename)
         print("SQL Query generated:", sql_query)
-        return jsonify({"query": sql_query})
+        return jsonify(sql_query)
     except Exception as e:
         print("Error during query generation:", e)
         return f"Generate Query Error: {str(e)}", 500
