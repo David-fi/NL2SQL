@@ -71,12 +71,18 @@ class ModelClient:
             temperature=temperature,
             stop=stop
         )
+        response_text = completion.choices[0].message.content.strip()
+        print("Model response:")
+        print(response_text)
     
-        # Extract the SQL query from the response
-        generated_sql = completion.choices[0].message.content  # this assumes the possibility of a list of choices so take the first
-        print("Generated SQL Query:")
-        print(generated_sql)
-        return generated_sql
+        # if response starts with a phrase suggesting a clarification, treat it as ambiguous
+        clarification_indicators = ["could you", "can you", "please clarify", "which", "do you mean", "ambiguous"]
+        is_clarification = any(response_text.lower().startswith(ind) for ind in clarification_indicators)
+    
+        if is_clarification:
+            return {"type": "clarification", "message": response_text}
+        else:
+            return {"type": "sql", "query": response_text}
 
     def run_query(self, sql_query):
         """
@@ -96,7 +102,12 @@ class ModelClient:
             conn.close()
             return results
         except Exception as e:
-            return str(e)
+            error_message = str(e)
+            # Check for common ambiguity errors 
+            if "unknown column" in error_message.lower() or "ambiguous" in error_message.lower():
+                return {"type": "clarification", "message": "The SQL query appears to be ambiguous. Could you please clarify which column or data element you meant?"}
+            else:
+                return {"type": "error", "message": error_message}
 
 if __name__ == "__main__":
     import os

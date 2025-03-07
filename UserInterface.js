@@ -9,6 +9,10 @@ function App() {
   const [results, setResults] = useState(""); //the results from running the query 
   const [loading, setLoading] = useState(false); // boolean for if the api request is in progress
   const [error, setError] = useState(""); //to display the error message
+  // some states for clarrification handling
+  const [showClarificationModal, setShowClarificationModal] = useState(false);
+  const [clarificationMessage, setClarificationMessage] = useState("");
+  const [clarificationInput, setClarificationInput] = useState("");
 
   // event handles
   const handleDatasetChange = (e) => {
@@ -57,23 +61,30 @@ function App() {
       }
       //update the generateSQL state to the response from the api
       const genData = await genResponse.json();
-      const sqlQuery = genData.query;
-      setGeneratedSQL(sqlQuery);
-
-      // Call API to execute the generated SQL query
-      const execResponse = await fetch("/api/execute-query", {
-        method: "POST", //send a post to the execute query endpoint woth the generated sql 
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query: sqlQuery }),
-      });
-      if (!execResponse.ok) { //throw error if response is not ok
-        const errorMsg = await execResponse.text();
-        throw new Error(`Execute Query Error: ${errorMsg}`);
+      // Check if the response is a clarification prompt
+      if (genData.type === "clarification") {
+        // Display clarifying question to the user
+        setClarificationMessage(genData.message);
+        setShowClarificationModal(true);
+      } else if (genData.type === "sql") {
+        const sqlQuery = genData.query;
+        setGeneratedSQL(sqlQuery);
+  
+        // Call API to execute the generated SQL query
+        const execResponse = await fetch("/api/execute-query", {
+          method: "POST", //send a post to the execute query endpoint woth the generated sql 
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ query: sqlQuery }),
+        });
+        if (!execResponse.ok) { //throw error if response is not ok
+          const errorMsg = await execResponse.text();
+          throw new Error(`Execute Query Error: ${errorMsg}`);
+        }
+        const execData = await execResponse.json();
+        setResults(execData.results);
       }
-      const execData = await execResponse.json();
-      setResults(execData.results); //set the result state to the returned data 
     } catch (err) {
       setError(err.message); //if error happens in the api call its caught 
     } finally {
@@ -81,9 +92,68 @@ function App() {
     }
   };
 
+  // called when the user clicks "Apply Clarification"
+  const applyClarification = () => {
+    // append the user’s clarification input to the original question
+    const updatedQuestion = question + " " + clarificationInput;
+    setQuestion(updatedQuestion);
+    setShowClarificationModal(false);
+    setClarificationInput("");
+    resubmitQuery(updatedQuestion);
+  };
+
+  // function to resubmit the query with the updated question
+  const resubmitQuery = async (updatedQuestion) => {
+    setError("");
+    setGeneratedSQL("");
+    setResults("");
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("dataset", dataset);
+      formData.append("question", updatedQuestion);
+
+      const genResponse = await fetch("/api/generate-query", {
+        method: "POST",
+        body: formData,
+      });
+      if (!genResponse.ok) {
+        const errorMsg = await genResponse.text();
+        throw new Error(`Generate Query Error: ${errorMsg}`);
+      }
+      const genData = await genResponse.json();
+
+      if (genData.type === "clarification") {
+        setClarificationMessage(genData.message);
+        setShowClarificationModal(true);
+      } else if (genData.type === "sql") {
+        const sqlQuery = genData.query;
+        setGeneratedSQL(sqlQuery);
+
+        const execResponse = await fetch("/api/execute-query", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ query: sqlQuery }),
+        });
+        if (!execResponse.ok) {
+          const errorMsg = await execResponse.text();
+          throw new Error(`Execute Query Error: ${errorMsg}`);
+        }
+        const execData = await execResponse.json();
+        setResults(execData.results);
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div style={{ maxWidth: "600px", margin: "auto", padding: "20px" }}>
-      <h1>NL2SQL Interface</h1> {/*heades*/}
+      <h1>NL2SQL Interface</h1>
 
       {/* Dataset Upload Section (fixed in the top-right corner) */}
       <div
@@ -145,6 +215,54 @@ function App() {
         <div style={{ marginTop: "10px" }}>
           <h3>Query Results:</h3>
           <pre>{JSON.stringify(results, null, 2)}</pre>
+        </div>
+      )}
+
+      {/* Clarification Modal */}
+      {showClarificationModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#fff",
+              padding: "20px",
+              borderRadius: "8px",
+              width: "400px",
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <h2>Clarification Needed</h2>
+            <p>
+              Your query appears ambiguous. {clarificationMessage}
+              <br />
+              Please add any additional details in the field below.
++             After entering the details, click "Apply Clarification" to proceed..
+            </p>
+            <input
+              type="text"
+              value={clarificationInput}
+              onChange={(e) => setClarificationInput(e.target.value)}
+              placeholder="Enter additional details..."
+              style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
+            />
+            <button onClick={applyClarification} style={{ marginRight: "10px" }}>
+              Apply Clarification
+            </button>
+            <button onClick={() => setShowClarificationModal(false)}>
+              Cancel
+            </button>
+          </div>
         </div>
       )}
     </div>
