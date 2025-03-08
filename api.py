@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 import os
-import tempfile
 from ModelClient import ModelClient
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -51,10 +50,10 @@ def execute_query():
     if not data or "query" not in data:
         return "No query provided", 400
     query = data["query"]
-
+    confirmed = data.get("confirmed", False)
     try:
         # Execute the SQL query created by my model on the MySQL database
-        results = model_client.run_query(query)
+        results = model_client.run_query(query, confirmed)
         return jsonify({"results": results})
     except Exception as e:
         return f"Execute Query Error: {str(e)}", 500

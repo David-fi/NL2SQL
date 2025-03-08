@@ -14,6 +14,10 @@ function App() {
   const [clarificationMessage, setClarificationMessage] = useState("");
   const [clarificationInput, setClarificationInput] = useState("");
 
+  // State for dangerous query confirmation modal
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState("");
+
   // event handles
   const handleDatasetChange = (e) => {
     setDataset(e.target.files[0]); //updata the dataset state with the file which is uploaed in the upload section
@@ -83,7 +87,12 @@ function App() {
           throw new Error(`Execute Query Error: ${errorMsg}`);
         }
         const execData = await execResponse.json();
-        setResults(execData.results);
+        if (execData.results && execData.results.type === "confirmation") {
+          setConfirmationMessage(execData.results.message);
+          setShowConfirmationModal(true);
+        } else {
+          setResults(execData.results);
+        }
       }
     } catch (err) {
       setError(err.message); //if error happens in the api call its caught 
@@ -142,8 +151,39 @@ function App() {
           throw new Error(`Execute Query Error: ${errorMsg}`);
         }
         const execData = await execResponse.json();
-        setResults(execData.results);
+        if (execData.results && execData.results.type === "confirmation") {
+          setConfirmationMessage(execData.results.message);
+          setShowConfirmationModal(true);
+        } else {
+          setResults(execData.results);
+        }
       }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+   // Execute dangerous query after user confirms.
+   const executeConfirmedQuery = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      const execResponse = await fetch("/api/execute-query", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query: generatedSQL, confirmed: true }),
+      });
+      if (!execResponse.ok) {
+        const errorMsg = await execResponse.text();
+        throw new Error(`Execute Query Error: ${errorMsg}`);
+      }
+      const execData = await execResponse.json();
+      setResults(execData.results);
+      setShowConfirmationModal(false);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -155,7 +195,7 @@ function App() {
     <div style={{ maxWidth: "600px", margin: "auto", padding: "20px" }}>
       <h1>NL2SQL Interface</h1>
 
-      {/* Dataset Upload Section (fixed in the top-right corner) */}
+      {/* Dataset Upload Section */}
       <div
         style={{
           position: "fixed",
@@ -176,11 +216,7 @@ function App() {
             <button onClick={handleRemoveDataset}>Remove Dataset</button>
           </div>
         ) : (
-          <input
-            type="file"
-            accept=".json,.jsonl,.csv"
-            onChange={handleDatasetChange}
-          />
+          <input type="file" accept=".json,.jsonl,.csv" onChange={handleDatasetChange} />
         )}
       </div>
 
@@ -202,9 +238,7 @@ function App() {
         </button>
       </form>
 
-      {error && (
-        <div style={{ color: "red", marginTop: "10px" }}>Error: {error}</div>
-      )}
+      {error && <div style={{ color: "red", marginTop: "10px" }}>Error: {error}</div>}
       {generatedSQL && (
         <div style={{ marginTop: "10px" }}>
           <h3>Generated SQL:</h3>
@@ -247,8 +281,7 @@ function App() {
               Your query appears ambiguous. {clarificationMessage}
               <br />
               Please add any additional details in the field below.
-+             After entering the details, click "Apply Clarification" to proceed..
-            </p>
+                           After entering the details, click "Apply Clarification" to proceed..            </p>
             <input
               type="text"
               value={clarificationInput}
@@ -259,9 +292,43 @@ function App() {
             <button onClick={applyClarification} style={{ marginRight: "10px" }}>
               Apply Clarification
             </button>
-            <button onClick={() => setShowClarificationModal(false)}>
-              Cancel
-            </button>
+            <button onClick={() => setShowClarificationModal(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal for Dangerous Query */}
+      {showConfirmationModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#fff",
+              padding: "20px",
+              borderRadius: "8px",
+              width: "400px",
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <h2>Dangerous Query Confirmation</h2>
+            <p>{confirmationMessage}</p>
+            <div style={{ marginTop: "10px" }}>
+              <button onClick={executeConfirmedQuery} style={{ marginRight: "10px" }}>
+                Execute Query
+              </button>
+              <button onClick={() => setShowConfirmationModal(false)}>Cancel</button>
+            </div>
           </div>
         </div>
       )}
