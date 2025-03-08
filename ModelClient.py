@@ -84,7 +84,7 @@ class ModelClient:
         else:
             return {"type": "sql", "query": response_text}
 
-    def run_query(self, sql_query):
+    def run_query(self, sql_query, confirmed=False):
         """
         Execute the provided SQL query against the MySQL database and return the results
         parameters
@@ -94,6 +94,12 @@ class ModelClient:
         conn = self.get_mysql_connection()
         if conn is None:
             return "MySQL connection failed."
+        # Validation layer: check for dangerous keywords if not confirmed.
+        if not confirmed:
+            dangerous_keywords = ["DROP", "DELETE", "UPDATE", "INSERT", "ALTER", "TRUNCATE"]
+            if any(keyword in sql_query.upper() for keyword in dangerous_keywords):
+                return {"type": "confirmation", "message": "Warning: This query may be destructive and cause irreversible changes to your data. Please confirm if you want to proceed."}
+        
         try:
             cursor = conn.cursor()
             cursor.execute(sql_query)
