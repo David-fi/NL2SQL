@@ -1,5 +1,16 @@
 from schemaExtract import extract_schema
 import mysql.connector
+import logging
+
+logging.basicConfig(level=logging.ERROR)
+
+class SchemaMismatchError(Exception):
+    """Raised when the dataset schema does not match the expected format."""
+    pass
+
+class InvalidQueryError(Exception):
+    """Raised when the SQL query is invalid or ambiguous."""
+    pass
 
 class ModelClient:
     def __init__(self, client, model, mysql_config):
@@ -44,12 +55,18 @@ class ModelClient:
         returns the created SQL query
         """
         # Extract schema from either file path or file object
+        #added a logging phase to help wiith handling errors
+        try:
+            schema_context_raw = extract_schema(dataset, filename=filename)
+        except Exception as e:
+            logging.error("Error extracting schema", exc_info=True)
+            raise SchemaMismatchError("Failed to extract schema from the dataset. Please ensure your file is in the correct format with the expected columns.")
+
         schema_context = (
-            f"{extract_schema(dataset, filename=filename)}\n\n"
+            f"{schema_context_raw}\n\n"
             "You are an expert SQL generator. Based on the above schema, generate a valid SQL query that answers the user's request. "
             "However, if the user's query is ambiguous or refers to data not available in the schema, instead of a SQL query, "
-            "output a clarifying question asking the user for more details. ONLY output the SQL query or a clarifying question, nothing else."
-            
+            "output a clarifying question, pointing them in the right direction and asking the user for more details. ONLY output the SQL query or a clarifying question, nothing else."
         )
 
         # Create the messages list for the chat API
@@ -107,14 +124,22 @@ class ModelClient:
             cursor.close()
             conn.close()
             return results
-        except Exception as e:
+        except mysql.connector.Error as e:
+            logging.error("Query execution error", exc_info=True)
             error_message = str(e)
-            # Check for common ambiguity errors 
-            if "unknown column" in error_message.lower() or "ambiguous" in error_message.lower():
-                return {"type": "clarification", "message": "The SQL query appears to be ambiguous. Could you please clarify which column or data element you meant?"}
-            else:
-                return {"type": "error", "message": error_message}
+            error_code = e.errno  # MySQL-specific error code
 
+            if "ambiguous" in error_message.lower():
+                raise InvalidQueryError("The SQL query references a column that does not exist or is ambiguous. Please verify that your dataset contains the correct columns and that your query references them correctly.")
+            elif error_code == 1064:
+                # 1064 is MySQL's syntax error code, which likely means the model didn't return valid SQL
+                raise InvalidQueryError(
+                    "It appears you’re asking about columns or data that do not exist in this dataset. "
+                    "Please review your question and ensure the requested columns are present."
+                )
+            else:
+             raise Exception("A system error occurred during query execution. Please try again.")            
+            
 if __name__ == "__main__":
     import os
     from openai import OpenAI

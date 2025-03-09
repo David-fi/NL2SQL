@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
 import os
-from ModelClient import ModelClient
+from ModelClient import ModelClient, SchemaMismatchError, InvalidQueryError
 from openai import OpenAI
 from dotenv import load_dotenv
+import logging
+logging.basicConfig(level=logging.ERROR)
 load_dotenv()
 
 app = Flask(__name__)
@@ -34,7 +36,19 @@ def generate_query():
     question = request.form.get('question')
     if not question:
         return "No question provided", 400
+    try:
+        sql_query = model_client.query(dataset_file, question, filename=dataset_file.filename)
+        print("SQL Query generated:", sql_query)
+        return jsonify(sql_query)
+    except SchemaMismatchError as sme:
+        logging.error("Schema mismatch error during query generation", exc_info=True)
+        return jsonify({"type": "error", "message": str(sme)}), 400
+    except Exception as e:
+        logging.error("Unhandled error during query generation", exc_info=True)
+        return f"Generate Query Error: {str(e)}", 500
 
+    
+'''
     try:
         # Directly pass the file object and filename to query
         sql_query = model_client.query(dataset_file, question, filename=dataset_file.filename)
@@ -43,6 +57,7 @@ def generate_query():
     except Exception as e:
         print("Error during query generation:", e)
         return f"Generate Query Error: {str(e)}", 500
+'''
 
 @app.route('/api/execute-query', methods=['POST'])
 def execute_query():
@@ -52,11 +67,15 @@ def execute_query():
     query = data["query"]
     confirmed = data.get("confirmed", False)
     try:
-        # Execute the SQL query created by my model on the MySQL database
+        #execute the sql query made by my model 
         results = model_client.run_query(query, confirmed)
         return jsonify({"results": results})
+    except InvalidQueryError as iqe:
+        logging.error("Invalid query error during execution", exc_info=True)
+        return jsonify({"type": "error", "message": str(iqe)}), 400
     except Exception as e:
+        logging.error("Unhandled error during query execution", exc_info=True)
         return f"Execute Query Error: {str(e)}", 500
-
+    
 if __name__ == '__main__':
     app.run(debug=True, port = 5001)
