@@ -60,8 +60,17 @@ function App() {
         body: formData,
       });
       if (!genResponse.ok) {//throw an error if response is not ok
-        const errorMsg = await genResponse.text();
-        throw new Error(`Generate Query Error: ${errorMsg}`);
+        let errorMsg = "";
+        try {
+          const errorJson = await execResponse.json();
+          // If the server returned { "type": "error", "message": "..."},
+          // we can grab that message directly
+          errorMsg = errorJson.message || "Unknown error occurred.";
+        } catch (jsonParseError) {
+          // If parsing fails (not valid JSON), fall back to plain text
+          errorMsg = await execResponse.text();
+        }
+        throw new Error(`Execute Query Error: ${errorMsg}`);
       }
       //update the generateSQL state to the response from the api
       const genData = await genResponse.json();
@@ -146,10 +155,16 @@ function App() {
           },
           body: JSON.stringify({ query: sqlQuery }),
         });
-        if (!execResponse.ok) {
-          const errorMsg = await execResponse.text();
-          throw new Error(`Execute Query Error: ${errorMsg}`);
-        }
+                if (!execResponse.ok) {
+                    let errorMsg = "";
+                    try {
+                      const errorJson = await execResponse.json();
+                      errorMsg = errorJson.message || "Unknown error occurred.";
+                    } catch (jsonParseError) {
+                      errorMsg = await execResponse.text();
+                    }
+                    throw new Error(`Execute Query Error: ${errorMsg}`);
+                  }
         const execData = await execResponse.json();
         if (execData.results && execData.results.type === "confirmation") {
           setConfirmationMessage(execData.results.message);
@@ -238,7 +253,12 @@ function App() {
         </button>
       </form>
 
-      {error && <div style={{ color: "red", marginTop: "10px" }}>Error: {error}</div>}
+      {error && (
+        <div style={{ color: "red", marginTop: "10px" }}>
+          <strong>Error:</strong> {error}
+          <p>Please review your dataset file or query input and try again.</p>
+        </div>
+      )}
       {generatedSQL && (
         <div style={{ marginTop: "10px" }}>
           <h3>Generated SQL:</h3>
