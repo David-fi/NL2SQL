@@ -81,7 +81,8 @@ class ModelClient:
             print(f"{msg['role'].upper()}: {msg['content']}\n")
 
         # Query the fine-tuned model
-        completion = self.client.chat.completions.create(
+        chat_obj = self.client.chat
+        completion = chat_obj.completions.create(
             model=self.model,
             messages=messages,
             max_tokens=max_tokens,
