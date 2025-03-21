@@ -94,3 +94,69 @@ INSERT INTO customers (customer_id, first_name, last_name, email, phone, address
 INSERT INTO orders (order_id, customer_id, order_date, total_amount) VALUES 
   (301, 201, '2023-09-01', 899.98),
   (302, 202, '2023-09-02', 1299.99);
+
+
+-- script for another dataset to test swapping databases
+CREATE DATABASE LibraryManagement;
+USE LibraryManagement;
+-- Authors table
+CREATE TABLE authors (
+  author_id INT PRIMARY KEY,
+  first_name VARCHAR(50),
+  last_name VARCHAR(50),
+  birth_date DATE
+);
+
+-- Books table
+CREATE TABLE books (
+  book_id INT PRIMARY KEY,
+  title VARCHAR(150),
+  author_id INT,
+  genre VARCHAR(50),
+  publish_date DATE,
+  available_copies INT,
+  FOREIGN KEY (author_id) REFERENCES authors(author_id)
+);
+
+-- Borrowers table
+CREATE TABLE borrowers (
+  borrower_id INT PRIMARY KEY,
+  first_name VARCHAR(50),
+  last_name VARCHAR(50),
+  membership_date DATE,
+  email VARCHAR(100),
+  phone VARCHAR(20)
+);
+
+-- Loans table
+CREATE TABLE loans (
+  loan_id INT PRIMARY KEY,
+  book_id INT,
+  borrower_id INT,
+  loan_date DATE,
+  due_date DATE,
+  return_date DATE,
+  FOREIGN KEY (book_id) REFERENCES books(book_id),
+  FOREIGN KEY (borrower_id) REFERENCES borrowers(borrower_id)
+);
+
+-- Insert sample authors
+INSERT INTO authors (author_id, first_name, last_name, birth_date) VALUES 
+  (1, 'George', 'Orwell', '1903-06-25'),
+  (2, 'Jane', 'Austen', '1775-12-16');
+
+-- Insert sample books
+INSERT INTO books (book_id, title, author_id, genre, publish_date, available_copies) VALUES 
+  (1, '1984', 1, 'Dystopian', '1949-06-08', 5),
+  (2, 'Animal Farm', 1, 'Political Satire', '1945-08-17', 3),
+  (3, 'Pride and Prejudice', 2, 'Romance', '1813-01-28', 4);
+
+-- Insert sample borrowers
+INSERT INTO borrowers (borrower_id, first_name, last_name, membership_date, email, phone) VALUES 
+  (1, 'Alice', 'Brown', '2023-01-15', 'alice.brown@example.com', '111-222-3333'),
+  (2, 'Bob', 'Smith', '2022-09-05', 'bob.smith@example.com', '222-333-4444');
+
+-- Insert sample loans
+INSERT INTO loans (loan_id, book_id, borrower_id, loan_date, due_date, return_date) VALUES 
+  (1, 1, 1, '2023-10-01', '2023-10-15', NULL),
+  (2, 3, 2, '2023-09-20', '2023-10-04', '2023-09-30');
