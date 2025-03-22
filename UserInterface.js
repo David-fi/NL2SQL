@@ -342,13 +342,10 @@ function App() {
 
       {/* Top-left Credentials Button */}
       <div style={{
-        position: "fixed",
-        top: "20px",
-        left: "20px",
-        border: "1px solid #ccc",
-        padding: "10px",
-        borderRadius: "4px",
-        backgroundColor: "#fff",
+        position: "flex",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        marginBottom: "10px"
       }}>
         <button onClick={() => setShowCredentialsModal(true)}>Edit phpMyAdmin Credentials</button>
       </div>
@@ -356,13 +353,12 @@ function App() {
       {/* Dataset Upload Section */}
       <div
         style={{
-          position: "fixed",
-          top: "20px",
-          right: "20px",
+          flex: "1",
           border: "1px solid #ccc",
           padding: "10px",
           borderRadius: "4px",
           backgroundColor: "#fff",
+          maxWidth: "300px"
         }}
       >
         <h3>Dataset Upload</h3>
@@ -392,7 +388,7 @@ function App() {
       </div>
 
       {/* Question Form Section */}
-      <form onSubmit={handleSubmit} style={{ marginTop: "100px" }}>
+      <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
         <div>
           <label>User Question:</label>
           <textarea
