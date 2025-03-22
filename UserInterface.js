@@ -18,13 +18,88 @@ function App() {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
 
+  // States for phpMyAdmin credentials and controlling the credentials 
+  const [phpHost, setPhpHost] = useState("localhost");
+  const [phpUser, setPhpUser] = useState("root");
+  const [phpPassword, setPhpPassword] = useState("");
+  const [showCredentialsModal, setShowCredentialsModal] = useState(true);
+  
+  // State to store the newDatabaseCreated flag from dataset upload
+  const [newDatabaseCreated, setNewDatabaseCreated] = useState(false);
+
   // event handles
   const handleDatasetChange = (e) => {
     setDataset(e.target.files[0]); //updata the dataset state with the file which is uploaed in the upload section
   };
 
-  const handleRemoveDataset = () => {
-    setDataset(null); //by putting the dataset state back to null it clears the dataset
+  // Upload dataset by calling the /api/upload-dataset endpoint
+  const handleDatasetUpload = async () => {
+    if (!dataset) {
+      setError("Please select a dataset file to upload.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("dataset", dataset);
+      formData.append("host", phpHost);
+      formData.append("user", phpUser);
+      formData.append("password", phpPassword);
+      
+      const response = await fetch("/api/upload-dataset", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error || "Dataset upload failed.");
+      } else {
+        setError("");
+        setNewDatabaseCreated(data.newDatabaseCreated);
+        alert(data.message);
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Remove dataset by calling the /api/remove-dataset endpoint
+  const handleRemoveDataset = async () => {
+    if (!dataset) {
+      setError("No dataset to remove.");
+      return;
+    }
+    if (!window.confirm("Are you sure you want to remove the dataset? This will drop the database if it was created by this system.")) {
+      return;
+    }
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("dataset", dataset);
+      formData.append("host", phpHost);
+      formData.append("user", phpUser);
+      formData.append("password", phpPassword);
+      formData.append("newDatabaseCreated", newDatabaseCreated);
+      
+      const response = await fetch("/api/remove-dataset", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error || "Dataset removal failed.");
+      } else {
+        setError("");
+        alert(data.message);
+        setDataset(null);
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleQuestionChange = (e) => {
@@ -62,13 +137,13 @@ function App() {
       if (!genResponse.ok) {//throw an error if response is not ok
         let errorMsg = "";
         try {
-          const errorJson = await execResponse.json();
+          const errorJson = await genResponse.json();
           // If the server returned { "type": "error", "message": "..."},
           // we can grab that message directly
           errorMsg = errorJson.message || "Unknown error occurred.";
         } catch (jsonParseError) {
           // If parsing fails (not valid JSON), fall back to plain text
-          errorMsg = await execResponse.text();
+          errorMsg = await genResponse.text();
         }
         throw new Error(`Execute Query Error: ${errorMsg}`);
       }
@@ -206,9 +281,55 @@ function App() {
     }
   };
 
+   // Save credentials and close the modal
+   const saveCredentials = () => {
+    setShowCredentialsModal(false);
+  };
+
   return (
     <div style={{ maxWidth: "600px", margin: "auto", padding: "20px" }}>
       <h1>NL2SQL Interface</h1>
+      {/* Credentials Modal */}
+      {showCredentialsModal && (
+        <div style={{
+          position: "fixed",
+          top: 0, left: 0, width: "100%", height: "100%",
+          backgroundColor: "rgba(0,0,0,0.5)",
+          display: "flex", justifyContent: "center", alignItems: "center",
+          zIndex: 1000
+        }}>
+          <div style={{ backgroundColor: "#fff", padding: "20px", borderRadius: "8px", width: "400px" }}>
+            <h2>phpMyAdmin Credentials</h2>
+            <p>Please enter your phpMyAdmin login details. For default values, simply continue.</p>
+            <div>
+              <label>Host:</label>
+              <input type="text" value={phpHost} onChange={(e) => setPhpHost(e.target.value)} style={{ width: "100%", marginBottom: "10px" }} />
+            </div>
+            <div>
+              <label>User:</label>
+              <input type="text" value={phpUser} onChange={(e) => setPhpUser(e.target.value)} style={{ width: "100%", marginBottom: "10px" }} />
+            </div>
+            <div>
+              <label>Password:</label>
+              <input type="password" value={phpPassword} onChange={(e) => setPhpPassword(e.target.value)} style={{ width: "100%", marginBottom: "10px" }} />
+            </div>
+            <button onClick={saveCredentials}>Save</button>
+          </div>
+        </div>
+      )}
+
+      {/* Top-left Credentials Button */}
+      <div style={{
+        position: "fixed",
+        top: "20px",
+        left: "20px",
+        border: "1px solid #ccc",
+        padding: "10px",
+        borderRadius: "4px",
+        backgroundColor: "#fff",
+      }}>
+        <button onClick={() => setShowCredentialsModal(true)}>Edit phpMyAdmin Credentials</button>
+      </div>
 
       {/* Dataset Upload Section */}
       <div
@@ -233,6 +354,11 @@ function App() {
         ) : (
           <input type="file" accept=".json,.jsonl,.csv" onChange={handleDatasetChange} />
         )}
+      <div style={{ marginTop: "10px" }}>
+          <button onClick={handleDatasetUpload} disabled={!dataset || loading}>
+            {loading ? "Uploading..." : "Upload Dataset"}
+          </button>
+        </div>
       </div>
 
       {/* Question Form Section */}
