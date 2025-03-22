@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function App() {
   // initialises a bunch of states 
@@ -29,6 +29,7 @@ function App() {
 
   const [enableFormatting, setEnableFormatting] = useState(true);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  const [columnFilters, setColumnFilters] = useState({});
   // event handles
   const handleDatasetChange = (e) => {
     setDataset(e.target.files[0]); //updata the dataset state with the file which is uploaed in the upload section
@@ -296,6 +297,17 @@ function App() {
     setShowCredentialsModal(false);
   };
 
+  useEffect(() => {
+    const savedSort = localStorage.getItem("sortConfig");
+    if (savedSort) {
+      setSortConfig(JSON.parse(savedSort));
+    }
+  }, []);
+  
+  useEffect(() => {
+    localStorage.setItem("sortConfig", JSON.stringify(sortConfig));
+  }, [sortConfig]);
+
   return (
     <div style={{ maxWidth: "600px", margin: "auto", padding: "20px" }}>
       <h1>NL2SQL Interface</h1>
@@ -428,36 +440,58 @@ function App() {
           <pre>{generatedSQL}</pre>
         </div>
       )}
-      {results && Array.isArray(results) && results.length > 0 && (        <div style={{ marginTop: "10px" }}>
+      {results && Array.isArray(results) && results.length > 0 && (        
+        <div style={{ marginTop: "10px" }}>
+          <div style={{ marginBottom: "10px" }}>
+            <button onClick={() => setSortConfig({ key: null, direction: "asc" })}>
+              Reset Sort
+            </button>
+          </div>
           <h3>Query Results:</h3>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr>
+          <thead>
+            <tr>
               {Object.keys(results[0]).map((key, index) => (
                 <th
-                key={index}
-                onClick={() => handleSort(key)}
-                title={`Click to sort by ${key}`}
-                style={{
-                  border: "1px solid #ccc",
-                  padding: "8px",
-                  backgroundColor: "#f9f9f9",
-                  textAlign: "left",
-                  cursor: "pointer"
-                }}
-              >
-                {key
-                  .replace(/_/g, " ")
-                  .replace(/\w\S*/g, (txt) =>
-                    txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-                  )}
-                {sortConfig.key === key ? (sortConfig.direction === "asc" ? " 🔼" : " 🔽") : ""}
-              </th>
-            ))}
-              </tr>
-            </thead>
+                  key={index}
+                  onClick={() => handleSort(key)}
+                  title={`Click to sort by ${key}`}
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    backgroundColor: "#f9f9f9",
+                    textAlign: "left",
+                    cursor: "pointer"
+                  }}
+                >
+                  <div>
+                    {key
+                      .replace(/_/g, " ")
+                      .replace(/\w\S*/g, (txt) =>
+                        txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+                      )}
+                    {sortConfig.key === key ? (sortConfig.direction === "asc" ? " 🔼" : " 🔽") : ""}
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Filter..."
+                    value={columnFilters[key] || ""}
+                    onChange={(e) =>
+                      setColumnFilters({ ...columnFilters, [key]: e.target.value })
+                    }
+                    style={{ width: "90%", marginTop: "4px", fontSize: "10px" }}
+                  />
+                </th>
+              ))}
+            </tr>
+          </thead>
             <tbody>
-            {[...results].sort((a, b) => {
+            {[...results]
+              .filter((row) =>
+                Object.entries(columnFilters).every(([key, value]) =>
+                  String(row[key] ?? "").toLowerCase().includes(value.toLowerCase())
+                )
+              ).sort((a, b) => {
                 if (!sortConfig.key) return 0;
                 const valA = a[sortConfig.key];
                 const valB = b[sortConfig.key];
