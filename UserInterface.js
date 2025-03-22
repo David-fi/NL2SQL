@@ -27,9 +27,19 @@ function App() {
   // State to store the newDatabaseCreated flag from dataset upload
   const [newDatabaseCreated, setNewDatabaseCreated] = useState(false);
 
+  const [enableFormatting, setEnableFormatting] = useState(true);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   // event handles
   const handleDatasetChange = (e) => {
     setDataset(e.target.files[0]); //updata the dataset state with the file which is uploaed in the upload section
+  };
+
+  const handleSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
   };
 
   // Upload dataset by calling the /api/upload-dataset endpoint
@@ -386,7 +396,26 @@ function App() {
           {loading ? "Loading..." : "Generate & Execute"}
         </button>
       </form>
-
+      <div style={{
+        marginTop: "10px",
+        fontSize: "12px",
+        padding: "5px 10px",
+        backgroundColor: "#f9f9f9",
+        border: "1px solid #ddd",
+        borderRadius: "3px",
+        display: "inline-block"
+      }}>
+        <label style={{ display: "flex", alignItems: "center" }}>
+          <input
+            type="checkbox"
+            checked={enableFormatting}
+            onChange={() => setEnableFormatting(!enableFormatting)}
+            style={{ marginRight: "5px" }}
+          />
+          Enable Friendly Formatting
+        </label>
+      </div>
+      
       {error && (
         <div style={{ color: "red", marginTop: "10px" }}>
           <strong>Error:</strong> {error}
@@ -399,10 +428,88 @@ function App() {
           <pre>{generatedSQL}</pre>
         </div>
       )}
-      {results && (
-        <div style={{ marginTop: "10px" }}>
+      {results && Array.isArray(results) && results.length > 0 && (        <div style={{ marginTop: "10px" }}>
           <h3>Query Results:</h3>
-          <pre>{JSON.stringify(results, null, 2)}</pre>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+              {Object.keys(results[0]).map((key, index) => (
+                <th
+                key={index}
+                onClick={() => handleSort(key)}
+                title={`Click to sort by ${key}`}
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  backgroundColor: "#f9f9f9",
+                  textAlign: "left",
+                  cursor: "pointer"
+                }}
+              >
+                {key
+                  .replace(/_/g, " ")
+                  .replace(/\w\S*/g, (txt) =>
+                    txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+                  )}
+                {sortConfig.key === key ? (sortConfig.direction === "asc" ? " 🔼" : " 🔽") : ""}
+              </th>
+            ))}
+              </tr>
+            </thead>
+            <tbody>
+            {[...results].sort((a, b) => {
+                if (!sortConfig.key) return 0;
+                const valA = a[sortConfig.key];
+                const valB = b[sortConfig.key];
+                if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
+                if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
+                return 0;
+              }).map((row, idx) => (
+                <tr key={idx}>
+                  {Object.keys(results[0]).map((col, colIdx) => {
+                    const value = row[col];
+                    let formatted = value;
+                    if (enableFormatting) {
+                      if (typeof value === "number") {
+                        formatted = value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+                      } else if (typeof value === "string" && !/^\d+$/.test(value) && Date.parse(value)) {
+                        const date = new Date(value);
+                        if (!isNaN(date)) {
+                          formatted = date.toLocaleDateString(undefined, {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          });
+                        }
+                      } else if (typeof value === "string") {
+                        formatted = value.charAt(0).toUpperCase() + value.slice(1);
+                      }
+                    }
+                    return (
+                      <td key={colIdx} style={{ border: "1px solid #ccc", padding: "8px" }}>{formatted}</td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button
+            onClick={() => {
+              const csvContent = [
+                Object.keys(results[0]).join(","),
+                ...results.map((row) => Object.values(row).map((val) => `"${String(val).replace(/"/g, '""')}"`).join(","))
+              ].join("\n");
+              const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement("a");
+              link.setAttribute("href", url);
+              link.setAttribute("download", "query_results.csv");
+              link.click();
+            }}
+            style={{ marginTop: "10px" }}
+          >
+            Export to CSV
+          </button>
         </div>
       )}
 
