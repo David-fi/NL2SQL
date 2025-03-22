@@ -349,12 +349,20 @@ function App() {
             <p>
               <strong>Uploaded File:</strong> {dataset.name}
             </p>
+            <p style={{ fontStyle: "italic", color: "#333" }}>
+              Remember to click "Upload Dataset".
+            </p>
             <button onClick={handleRemoveDataset}>Remove Dataset</button>
           </div>
         ) : (
-          <input type="file" accept=".json,.jsonl,.csv" onChange={handleDatasetChange} />
+          <div>
+            <input type="file" accept=".json,.jsonl,.csv" onChange={handleDatasetChange} />
+            <p style={{ fontStyle: "italic", color: "#333", marginTop: "10px" }}>
+              After selecting your file, click "Upload Dataset".
+            </p>
+          </div>
         )}
-      <div style={{ marginTop: "10px" }}>
+        <div style={{ marginTop: "10px" }}>
           <button onClick={handleDatasetUpload} disabled={!dataset || loading}>
             {loading ? "Uploading..." : "Upload Dataset"}
           </button>
@@ -369,7 +377,7 @@ function App() {
             value={question}
             onChange={handleQuestionChange}
             rows="4"
-            style={{ width: "100%" }}
+            style={{ width: "90%" }}
             placeholder="Enter your natural language query here..."
             required
           />
