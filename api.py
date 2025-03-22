@@ -132,67 +132,66 @@ def upload_dataset():
     }
     
     # Process dataset to generate and execute CREATE TABLE and INSERT queries so i can populate the database 
-    try:
-        conn = mysql.connector.connect(
-            host=host,
-            user=user,
-            password=password,
-            database=db_name
-        )
-        cursor = conn.cursor()
-        # Iterate through each record in the dataset JSON
-        for record in data:
-            if record.get("type") == "table":
-                table_name = record.get("name")
-                table_data = record.get("data", [])
-                if not table_name or not table_data:
-                    continue
-                # get schema from the first row
-                first_row = table_data[0]
-                columns_definitions = []
-                for col, val in first_row.items():
-                    if isinstance(val, int):
-                        col_type = "INT"
-                    elif isinstance(val, float):
-                        col_type = "DOUBLE"
-                    else:
-                        col_type = "VARCHAR(255)"
-                    columns_definitions.append(f"`{col}` {col_type}")
-                columns_sql = ", ".join(columns_definitions)
-                create_table_query = f"CREATE TABLE IF NOT EXISTS `{table_name}` ({columns_sql});"
-                cursor.execute(create_table_query)
-
-                # Insert data rows
-                for row in table_data:
-                    columns = ", ".join(f"`{col}`" for col in row.keys())
-                    values_list = []
-                    for val in row.values():
-                        if isinstance(val, str):
-                            escaped_val = val.replace("'", "''")
-                            values_list.append(f"'{escaped_val}'")
-                        elif val is None:
-                            values_list.append("NULL")
+    if newDatabaseCreated:
+        try:
+            conn = mysql.connector.connect(
+                host=host,
+                user=user,
+                password=password,
+                database=db_name
+            )
+            cursor = conn.cursor()
+            # Iterate through each record in the dataset JSON
+            for record in data:
+                if record.get("type") == "table":
+                    table_name = record.get("name")
+                    table_data = record.get("data", [])
+                    if not table_name or not table_data:
+                        continue
+                    # get schema from the first row
+                    first_row = table_data[0]
+                    columns_definitions = []
+                    for col, val in first_row.items():
+                        if isinstance(val, int):
+                            col_type = "INT"
+                        elif isinstance(val, float):
+                            col_type = "DOUBLE"
                         else:
-                            values_list.append(str(val))
-                    values = ", ".join(values_list)
-                    insert_query = f"INSERT INTO `{table_name}` ({columns}) VALUES ({values});"
-                    cursor.execute(insert_query)
-        conn.commit()
-    except mysql.connector.Error as err:
-        conn.rollback()
-        return jsonify({"error": f"MySQL error during table creation/insertion: {err}"}), 500
-    finally:
-        if 'cursor' in locals():
-            cursor.close()
-        if 'conn' in locals():
-            conn.close()
+                            col_type = "VARCHAR(255)"
+                        columns_definitions.append(f"`{col}` {col_type}")
+                    columns_sql = ", ".join(columns_definitions)
+                    create_table_query = f"CREATE TABLE IF NOT EXISTS `{table_name}` ({columns_sql});"
+                    cursor.execute(create_table_query)
 
-
-    return jsonify({
-        "message": "Dataset processed successfully.",
-        "database": db_name,
-        "newDatabaseCreated": newDatabaseCreated
-    })
+                    # Insert data rows
+                    for row in table_data:
+                        columns = ", ".join(f"`{col}`" for col in row.keys())
+                        values_list = []
+                        for val in row.values():
+                            if isinstance(val, str):
+                                escaped_val = val.replace("'", "''")
+                                values_list.append(f"'{escaped_val}'")
+                            elif val is None:
+                                values_list.append("NULL")
+                            else:
+                                values_list.append(str(val))
+                        values = ", ".join(values_list)
+                        insert_query = f"INSERT INTO `{table_name}` ({columns}) VALUES ({values});"
+                        cursor.execute(insert_query)
+            conn.commit()
+        except mysql.connector.Error as err:
+            conn.rollback()
+            return jsonify({"error": f"MySQL error during table creation/insertion: {err}"}), 500
+        finally:
+            if 'cursor' in locals():
+                cursor.close()
+            if 'conn' in locals():
+                conn.close()
+        return jsonify({
+            "message": "Dataset processed successfully.",
+            "database": db_name,
+            "newDatabaseCreated": newDatabaseCreated
+        })
 
 @app.route('/api/remove-dataset', methods=['POST'])
 def remove_dataset():
