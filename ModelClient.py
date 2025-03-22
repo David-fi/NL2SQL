@@ -5,11 +5,11 @@ import logging
 logging.basicConfig(level=logging.ERROR)
 
 class SchemaMismatchError(Exception):
-    """Raised when the dataset schema does not match the expected format."""
+    #Raised when the dataset schema does not match the expected format.
     pass
 
 class InvalidQueryError(Exception):
-    """Raised when the SQL query is invalid or ambiguous."""
+    #Raised when the SQL query is invalid or ambiguous.
     pass
 
 class ModelClient:
@@ -27,7 +27,7 @@ class ModelClient:
         self.mysql_config = mysql_config
 
     def get_mysql_connection(self):
-        """Establish and return a MySQL connection using the given configuration"""
+        #Establish and return a MySQL connection using the given configuration
         try:
             conn = mysql.connector.connect(
                 host=self.mysql_config["host"],
