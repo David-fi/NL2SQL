@@ -121,9 +121,11 @@ class ModelClient:
         try:
             cursor = conn.cursor()
             cursor.execute(sql_query)
-            results = cursor.fetchall()
+            column_names = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
             cursor.close()
             conn.close()
+            results = [dict(zip(column_names, row)) for row in rows]
             return results
         except mysql.connector.Error as e:
             logging.error("Query execution error", exc_info=True)
