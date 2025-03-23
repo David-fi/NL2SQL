@@ -309,7 +309,7 @@ function App() {
   }, [sortConfig]);
 
   return (
-    <div style={{ maxWidth: "600px", margin: "auto", padding: "20px" }}>
+    <div style={{ maxWidth: "1000px", margin: "auto", padding: "20px" }}>
       <h1>NL2SQL Interface</h1>
       {/* Credentials Modal */}
       {showCredentialsModal && (
@@ -340,25 +340,26 @@ function App() {
         </div>
       )}
 
-      {/* Top-left Credentials Button */}
+      {/* left Credentials Button */}
       <div style={{
-        position: "flex",
+        display: "flex",
         justifyContent: "space-between",
-        alignItems: "flex-start",
+        //alignItems: "flex-start",
         marginBottom: "10px"
       }}>
+      <div> 
         <button onClick={() => setShowCredentialsModal(true)}>Edit phpMyAdmin Credentials</button>
-      </div>
-
+      </div>      
+      
       {/* Dataset Upload Section */}
       <div
         style={{
           flex: "1",
           border: "1px solid #ccc",
-          padding: "10px",
+          padding: "5px",
           borderRadius: "4px",
           backgroundColor: "#fff",
-          maxWidth: "300px"
+          maxWidth: "260px"
         }}
       >
         <h3>Dataset Upload</h3>
@@ -386,6 +387,7 @@ function App() {
           </button>
         </div>
       </div>
+    </div>
 
       {/* Question Form Section */}
       <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>

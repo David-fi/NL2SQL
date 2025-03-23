@@ -146,9 +146,10 @@ class ModelClient:
 if __name__ == "__main__":
     import os
     from openai import OpenAI
-
+    from dotenv import load_dotenv
+    load_dotenv()
     # initialise the OpenAI client
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    client =OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     
     # name of fine tuned model
     fine_tuned_model = "ft:gpt-4o-mini-2024-07-18:personal::B3lHt6V9"
