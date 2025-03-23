@@ -362,7 +362,7 @@ function App() {
           maxWidth: "260px"
         }}
       >
-        <h3>Dataset Upload</h3>
+        <h3>Dataset Upload (json file)</h3>
         {dataset ? (
           <div>
             <p>
@@ -391,9 +391,9 @@ function App() {
 
       {/* Question Form Section */}
       <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
-        <div>
-          <label>User Question:</label>
-          <textarea
+      <div>
+        <label>User Question:</label>
+              <textarea
             value={question}
             onChange={handleQuestionChange}
             rows="4"
@@ -401,7 +401,7 @@ function App() {
             placeholder="Enter your natural language query here..."
             required
           />
-        </div>
+      </div>
         <button type="submit" disabled={loading} style={{ marginTop: "10px" }}>
           {loading ? "Loading..." : "Generate & Execute"}
         </button>
