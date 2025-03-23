@@ -76,12 +76,14 @@ def extract_schema_from_csv(file_input):
         table_name = "uploaded_table"
         df = pd.read_csv(file_input)
 
+    df = df.infer_objects()  # Attempt to infer better data types
+
     schema = {}
     for col in df.columns:
-        dtype = df[col].dtype
-        if pd.api.types.is_integer_dtype(dtype):
+        sample_value = df[col].dropna().iloc[0] if not df[col].dropna().empty else ""
+        if isinstance(sample_value, int):
             schema[col] = "int"
-        elif pd.api.types.is_float_dtype(dtype):
+        elif isinstance(sample_value, float):
             schema[col] = "float"
         else:
             schema[col] = "str"
