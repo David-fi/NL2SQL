@@ -114,6 +114,11 @@ def upload_dataset():
         if err.errno == errorcode.ER_DB_CREATE_EXISTS:
             # Database already exists so flag remains False
             newDatabaseCreated = False
+            return jsonify({
+                "message": f"Database '{db_name}' is already present and did not need to be uploaded. Continue with your question.",
+                "database": db_name,
+                "newDatabaseCreated": newDatabaseCreated
+            })
         else:
             logging.error("MySQL error during database creation", exc_info=True)
             return jsonify({"error": f"MySQL error: {err}"}), 500
@@ -246,5 +251,28 @@ def remove_dataset():
     
     return jsonify({"message": f"Database {db_name} has been dropped successfully."})
 
+@app.route('/api/schema-preview', methods=['POST'])
+def schema_preview():
+    if 'dataset' not in request.files:
+        return jsonify({"error": "No dataset file provided"}), 400
+    dataset_file = request.files['dataset']
+    try:
+        dataset_content = dataset_file.read().decode('utf-8')
+        data = json.loads(dataset_content)
+        preview = {}
+        for record in data:
+            if record.get("type") == "table":
+                table_name = record["name"]
+                table_data = record.get("data", [])
+                if table_data:
+                    column_samples = {}
+                    for col in table_data[0].keys():
+                        unique_vals = list({row[col] for row in table_data if row.get(col) is not None})
+                        column_samples[col] = unique_vals[:3]
+                    preview[table_name] = column_samples
+        return jsonify(preview)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 if __name__ == '__main__':
     app.run(debug=True, port = 5001)

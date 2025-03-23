@@ -1,5 +1,6 @@
-
 import React, { useState, useEffect } from "react";
+import Downshift from 'downshift';
+import {matchSorter} from 'match-sorter';
 
 function App() {
   // initialises a bunch of states 
@@ -30,6 +31,10 @@ function App() {
   const [enableFormatting, setEnableFormatting] = useState(true);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [columnFilters, setColumnFilters] = useState({});
+
+  const [schemaPreview, setSchemaPreview] = useState({});
+  const [autocompleteEnabled, setAutocompleteEnabled] = useState(true);
+  
   // event handles
   const handleDatasetChange = (e) => {
     setDataset(e.target.files[0]); //updata the dataset state with the file which is uploaed in the upload section
@@ -64,9 +69,19 @@ function App() {
       const data = await response.json();
       if (!response.ok) {
         setError(data.error || "Dataset upload failed.");
+        setDataset(null); // Clear the invalid dataset
+        return;
       } else {
         setError("");
         setNewDatabaseCreated(data.newDatabaseCreated);
+        const schemaForm = new FormData();
+        schemaForm.append("dataset", dataset);
+        const previewResponse = await fetch("/api/schema-preview", {
+          method: "POST",
+          body: schemaForm
+        });
+        const previewData = await previewResponse.json();
+        setSchemaPreview(previewData);
         alert(data.message);
       }
     } catch (err) {
@@ -318,7 +333,7 @@ function App() {
           top: 0, left: 0, width: "100%", height: "100%",
           backgroundColor: "rgba(0,0,0,0.5)",
           display: "flex", justifyContent: "center", alignItems: "center",
-          zIndex: 1000
+          zIndex: 3000
         }}>
           <div style={{ backgroundColor: "#fff", padding: "20px", borderRadius: "8px", width: "400px" }}>
             <h2>phpMyAdmin Credentials</h2>
@@ -393,43 +408,127 @@ function App() {
       <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
       <div>
         <label>User Question:</label>
-              <textarea
-            value={question}
-            onChange={handleQuestionChange}
-            rows="4"
-            style={{ width: "90%" }}
-            placeholder="Enter your natural language query here..."
-            required
-          />
+        <div style={{ position: "relative" }}>
+          <Downshift
+            onChange={selection => {
+              const words = question.trim().split(" ");
+              words[words.length - 1] = selection;
+              setQuestion(words.join(" "));
+            }}
+            itemToString={item => (item ? item : "")}
+          >
+            {({
+              getInputProps,
+              getItemProps,
+              getLabelProps,
+              getMenuProps,
+              isOpen,
+              inputValue,
+              highlightedIndex,
+              selectedItem,
+            }) => {
+              const flatSuggestions = Object.entries(schemaPreview).flatMap(([table, columns]) => {
+                const tableName = table.replace(/_/g, " ");
+                const columnsAndValues = Object.entries(columns).flatMap(([col, vals]) => {
+                  const colName = col.replace(/_/g, " ");
+                  const valueSuggestions = vals.map(val => `${colName} of ${val}`);
+                  return [colName, ...valueSuggestions];
+                });
+                return [tableName, ...columnsAndValues];
+              });
+              const lastWord = inputValue.trim().split(" ").pop();
+              const suggestions = autocompleteEnabled && lastWord
+                ? matchSorter(flatSuggestions, lastWord, { threshold: matchSorter.rankings.CONTAINS })
+                : [];
+
+              return (
+                <div>
+                  <textarea
+                    {...getInputProps({
+                      placeholder: "Enter your natural language query here...",
+                      value: question,
+                      onChange: (e) => setQuestion(e.target.value),
+                      rows: 4,
+                      style: { width: "90%" },
+                      required: true
+                    })}
+                  />
+                  <ul {...getMenuProps()} style={{
+                  position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    zIndex: 2000,
+                    backgroundColor: "white",
+                    border: "1px solid #ccc",
+                    width: "90%",
+                    maxHeight: "150px",
+                    overflowY: "auto",
+                    margin: 0,
+                    padding: 0,
+                    listStyle: "none",
+                    pointerEvents: "auto",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
+                  }}>
+                    {isOpen && suggestions.map((item, index) => (
+                      <li
+                        {...getItemProps({
+                          key: item + index,
+                          index,
+                          item,
+                          style: {
+                            backgroundColor: highlightedIndex === index ? '#bde4ff' : 'white',
+                            padding: '5px',
+                            cursor: 'pointer'
+                          }
+                        })}
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            }}
+          </Downshift>
+        </div>
       </div>
         <button type="submit" disabled={loading} style={{ marginTop: "10px" }}>
           {loading ? "Loading..." : "Generate & Execute"}
         </button>
       </form>
-      <div style={{
-        marginTop: "10px",
-        fontSize: "12px",
-        padding: "5px 10px",
-        backgroundColor: "#f9f9f9",
-        border: "1px solid #ddd",
-        borderRadius: "3px",
-        display: "inline-block"
-      }}>
-        <label style={{ display: "flex", alignItems: "center" }}>
-          <input
-            type="checkbox"
-            checked={enableFormatting}
-            onChange={() => setEnableFormatting(!enableFormatting)}
-            style={{ marginRight: "5px" }}
-          />
-          Enable Friendly Formatting
-        </label>
+      <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+        <button
+          type="button"
+          onClick={() => setAutocompleteEnabled(!autocompleteEnabled)}
+          style={{
+            padding: "8px 12px",
+            borderRadius: "4px",
+            border: "1px solid #ccc",
+            backgroundColor: autocompleteEnabled ? "#e0f7fa" : "#fff",
+            cursor: "pointer"
+          }}
+        >
+          {autocompleteEnabled ? "✓ Autocomplete Enabled" : "Enable Autocomplete"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setEnableFormatting(!enableFormatting)}
+          style={{
+            padding: "8px 12px",
+            borderRadius: "4px",
+            border: "1px solid #ccc",
+            backgroundColor: enableFormatting ? "#e0f7fa" : "#fff",
+            cursor: "pointer"
+          }}
+        >
+          {enableFormatting ? "✓ Friendly Formatting On" : "Enable Friendly Formatting"}
+        </button>
       </div>
       
       {error && (
         <div style={{ color: "red", marginTop: "10px" }}>
           <strong>Error:</strong> {error}
-          <p>Please review your dataset file or query input and try again.</p>
+          <p>Please review your dataset file (must be json file) or query input and try again.</p>
         </div>
       )}
       {generatedSQL && (
@@ -558,6 +657,7 @@ function App() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            zIndex: 3000,
           }}
         >
           <div
@@ -571,10 +671,12 @@ function App() {
           >
             <h2>Clarification Needed</h2>
             <p>
-              Your query appears ambiguous. {clarificationMessage}
-              <br />
-              Please add any additional details in the field below.
-                           After entering the details, click "Apply Clarification" to proceed..            </p>
+              Your query appears ambiguous.<br />
+              <strong style={{ display: "block", margin: "10px 0", fontSize: "16px" }}>
+                {clarificationMessage}
+              </strong>
+              Please add any additional details in the field below. After entering the details, click "Apply Clarification" to proceed.
+            </p>
             <input
               type="text"
               value={clarificationInput}
@@ -603,6 +705,7 @@ function App() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            zIndex: 3000,
           }}
         >
           <div
