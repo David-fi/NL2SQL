@@ -324,8 +324,23 @@ function App() {
   }, [sortConfig]);
 
   return (
-    <div style={{ maxWidth: "1000px", margin: "auto", padding: "20px" }}>
-      <h1>NL2SQL Interface</h1>
+    <div style={{ 
+      maxWidth: "1000px", 
+      margin: "40px auto", 
+      padding: "30px", 
+      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", 
+      backgroundColor: "#f9f9fb", 
+      borderRadius: "10px", 
+      boxShadow: "0 2px 10px rgba(0,0,0,0.1)" 
+    }}>
+      <h1 style={{
+        color: "#333",
+        borderBottom: "2px solid #ddd",
+        paddingBottom: "10px",
+        marginBottom: "20px"
+      }}>
+        NL2SQL Interface
+      </h1>
       {/* Credentials Modal */}
       {showCredentialsModal && (
         <div style={{
@@ -350,7 +365,22 @@ function App() {
               <label>Password:</label>
               <input type="password" value={phpPassword} onChange={(e) => setPhpPassword(e.target.value)} style={{ width: "100%", marginBottom: "10px" }} />
             </div>
-            <button onClick={saveCredentials}>Save</button>
+            <button onClick={saveCredentials}
+              style={{
+                backgroundColor: "#1976d2",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                padding: "8px 16px",
+                fontSize: "14px",
+                fontWeight: "500",
+                cursor: "pointer",
+                boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                transition: "all 0.2s ease-in-out"
+              }}
+              onMouseOver={(e) => (e.target.style.backgroundColor = "#1565c0")}
+              onMouseOut={(e) => (e.target.style.backgroundColor = "#1976d2")}
+            >Save</button>
           </div>
         </div>
       )}
@@ -363,21 +393,39 @@ function App() {
         marginBottom: "10px"
       }}>
       <div> 
-        <button onClick={() => setShowCredentialsModal(true)}>Edit phpMyAdmin Credentials</button>
+        <button onClick={() => setShowCredentialsModal(true)}
+              style={{
+                backgroundColor: "#1976d2",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                padding: "8px 16px",
+                fontWeight: "500",
+                cursor: "pointer",
+                boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                transition: "all 0.2s ease-in-out"
+              }}
+              onMouseOver={(e) => (e.target.style.backgroundColor = "#1565c0")}
+              onMouseOut={(e) => (e.target.style.backgroundColor = "#1976d2")}
+          >Edit phpMyAdmin Credentials</button>
       </div>      
       
       {/* Dataset Upload Section */}
       <div
         style={{
-          flex: "1",
-          border: "1px solid #ccc",
-          padding: "5px",
-          borderRadius: "4px",
-          backgroundColor: "#fff",
-          maxWidth: "260px"
+      flex: "1",
+      border: "1px solid #e0e0e0",
+      padding: "15px",
+      borderRadius: "10px",
+      backgroundColor: "#ffffff",
+      maxWidth: "280px",
+      boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
         }}
       >
-        <h3>Dataset Upload (json file)</h3>
+        <h3 style={{ fontSize: "16px", fontWeight: "600", color: "#333", marginBottom: "12px" }}>
+          Dataset Upload (json file)
+        </h3>
         {dataset ? (
           <div>
             <p>
@@ -386,7 +434,21 @@ function App() {
             <p style={{ fontStyle: "italic", color: "#333" }}>
               Remember to click "Upload Dataset".
             </p>
-            <button onClick={handleRemoveDataset}>Remove Dataset</button>
+            <button onClick={handleRemoveDataset}
+                style={{
+                  backgroundColor: "#1976d2",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "8px 16px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                  transition: "all 0.2s ease-in-out"
+                }}
+                onMouseOver={(e) => (e.target.style.backgroundColor = "#1565c0")}
+                onMouseOut={(e) => (e.target.style.backgroundColor = "#1976d2")}
+            >Remove Dataset</button>
           </div>
         ) : (
           <div>
@@ -397,7 +459,21 @@ function App() {
           </div>
         )}
         <div style={{ marginTop: "10px" }}>
-          <button onClick={handleDatasetUpload} disabled={!dataset || loading}>
+          <button onClick={handleDatasetUpload} disabled={!dataset || loading}
+          style={{
+            backgroundColor: "#1976d2",
+            color: "white",
+            border: "none",
+            borderRadius: "6px",
+            padding: "8px 16px",
+            fontWeight: "500",
+            cursor: "pointer",
+            boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+            transition: "all 0.2s ease-in-out"
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#1565c0")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#1976d2")}
+          >
             {loading ? "Uploading..." : "Upload Dataset"}
           </button>
         </div>
@@ -407,7 +483,7 @@ function App() {
       {/* Question Form Section */}
       <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
       <div>
-        <label>User Question:</label>
+        <label>Ask your question about the data bellow:</label>
         <div style={{ position: "relative" }}>
           <Downshift
             onChange={selection => {
@@ -449,7 +525,15 @@ function App() {
                       value: question,
                       onChange: (e) => setQuestion(e.target.value),
                       rows: 4,
-                      style: { width: "90%" },
+                      style: {
+                        width: "90%",
+                        padding: "10px",
+                        fontSize: "14px",
+                        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                        border: "1px solid #ccc",
+                        borderRadius: "6px",
+                        marginTop: "6px"
+                      },
                       required: true
                     })}
                   />
@@ -492,7 +576,19 @@ function App() {
           </Downshift>
         </div>
       </div>
-        <button type="submit" disabled={loading} style={{ marginTop: "10px" }}>
+        <button type="submit" disabled={loading} style={{
+                  backgroundColor: "#1976d2",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "8px 16px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                  transition: "all 0.2s ease-in-out"
+                }}
+                onMouseOver={(e) => (e.target.style.backgroundColor = "#1565c0")}
+                onMouseOut={(e) => (e.target.style.backgroundColor = "#1976d2")}>
           {loading ? "Loading..." : "Generate & Execute"}
         </button>
       </form>
@@ -540,7 +636,23 @@ function App() {
       {results && Array.isArray(results) && results.length > 0 && (        
         <div style={{ marginTop: "10px" }}>
           <div style={{ marginBottom: "10px" }}>
-            <button onClick={() => setSortConfig({ key: null, direction: "asc" })}>
+            <button onClick={() => setSortConfig({ key: null, direction: "asc" })}
+             style={{
+              backgroundColor: "#e0f7fa",
+              border: "1px solid #b2ebf2",
+              borderRadius: "20px",
+              padding: "6px 12px",
+              fontSize: "13px",
+              fontWeight: "500",
+              color: "#00796b",
+              cursor: "pointer",
+              marginRight: "10px",
+              marginTop: "10px",
+              transition: "background-color 0.2s ease-in-out"
+            }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#b2ebf2")}
+            onMouseOut={(e) => (e.target.style.backgroundColor = "#e0f7fa")}
+              >
               Reset Sort
             </button>
           </div>
@@ -637,7 +749,19 @@ function App() {
               link.setAttribute("download", "query_results.csv");
               link.click();
             }}
-            style={{ marginTop: "10px" }}
+            style={{
+              backgroundColor: "#1976d2",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              padding: "8px 16px",
+              fontWeight: "500",
+              cursor: "pointer",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+              transition: "all 0.2s ease-in-out"
+            }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#1565c0")}
+            onMouseOut={(e) => (e.target.style.backgroundColor = "#1976d2")}
           >
             Export to CSV
           </button>
@@ -682,12 +806,44 @@ function App() {
               value={clarificationInput}
               onChange={(e) => setClarificationInput(e.target.value)}
               placeholder="Enter additional details..."
-              style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
+              style={{ width: "90%", padding: "8px", marginBottom: "10px" }}
             />
-            <button onClick={applyClarification} style={{ marginRight: "10px" }}>
-              Apply Clarification
-            </button>
-            <button onClick={() => setShowClarificationModal(false)}>Cancel</button>
+            <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
+              <button onClick={applyClarification} 
+                style={{
+                  backgroundColor: "#1976d2",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "8px 16px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                  transition: "all 0.2s ease-in-out"
+                }}
+                onMouseOver={(e) => (e.target.style.backgroundColor = "#1565c0")}
+                onMouseOut={(e) => (e.target.style.backgroundColor = "#1976d2")}
+              >
+                Apply Clarification
+              </button>
+              <button onClick={() => setShowClarificationModal(false)}
+                style={{
+                  backgroundColor: "#1976d2",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "8px 16px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                  transition: "all 0.2s ease-in-out"
+                }}
+                onMouseOver={(e) => (e.target.style.backgroundColor = "#1565c0")}
+                onMouseOut={(e) => (e.target.style.backgroundColor = "#1976d2")}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -720,10 +876,36 @@ function App() {
             <h2>Dangerous Query Confirmation</h2>
             <p>{confirmationMessage}</p>
             <div style={{ marginTop: "10px" }}>
-              <button onClick={executeConfirmedQuery} style={{ marginRight: "10px" }}>
+              <button onClick={executeConfirmedQuery} style={{
+                  backgroundColor: "#1976d2",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "8px 16px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                  transition: "all 0.2s ease-in-out"
+                }}
+                onMouseOver={(e) => (e.target.style.backgroundColor = "#1565c0")}
+                onMouseOut={(e) => (e.target.style.backgroundColor = "#1976d2")}>
                 Execute Query
               </button>
-              <button onClick={() => setShowConfirmationModal(false)}>Cancel</button>
+              <button onClick={() => setShowConfirmationModal(false)}
+                style={{
+                  backgroundColor: "#1976d2",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "8px 16px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                  transition: "all 0.2s ease-in-out"
+                }}
+                onMouseOver={(e) => (e.target.style.backgroundColor = "#1565c0")}
+                onMouseOut={(e) => (e.target.style.backgroundColor = "#1976d2")}
+                >Cancel</button>
             </div>
           </div>
         </div>
