@@ -85,9 +85,10 @@ class ModelClient:
         completion = chat_obj.completions.create(
             model=self.model,
             messages=messages,
-            max_tokens=max_tokens,
-            temperature=temperature,
-            stop=stop
+            #max_tokens=max_tokens,
+            #max_completion_tokens=max_tokens,  # rename parameter here
+            #temperature=temperature,
+            #stop=stop
         )
         response_text = completion.choices[0].message.content.strip()
         print("Model response:")
@@ -109,18 +110,22 @@ class ModelClient:
         sql_query: The SQL query string
         Query results or an error message
         """
+        if isinstance(sql_query, dict) and "query" in sql_query:
+            sql_query_str = sql_query["query"]
+        else:
+            sql_query_str = sql_query
         conn = self.get_mysql_connection()
         if conn is None:
             return "MySQL connection failed."
         # Validation layer: check for dangerous keywords if not confirmed.
         if not confirmed:
             dangerous_keywords = ["DROP", "DELETE", "UPDATE", "INSERT", "ALTER", "TRUNCATE"]
-            if any(keyword in sql_query.upper() for keyword in dangerous_keywords):
+            if any(keyword in sql_query_str.upper() for keyword in dangerous_keywords):
                 return {"type": "confirmation", "message": "Warning: This query may be destructive and cause irreversible changes to your data. Please confirm if you want to proceed."}
         
         try:
             cursor = conn.cursor()
-            cursor.execute(sql_query)
+            cursor.execute(sql_query_str)
             column_names = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
             cursor.close()
@@ -153,23 +158,24 @@ if __name__ == "__main__":
     
     # name of fine tuned model
     fine_tuned_model = "ft:gpt-4o-mini-2024-07-18:personal::B3lHt6V9"
+    #fine_tuned_model = "o3-mini-2025-01-31"
     
     # MySQL connection config
     mysql_config = {
         "host": "localhost",
         "user": "root",
         "password": "",
-        "database": "WorkplaceTest"
+        "database": "LibraryManagement"
     }
     
     # instantiate the ModelClient
     inference_client = ModelClient(client, fine_tuned_model, mysql_config)
     
     # dataset path
-    dataset_path = "/Users/david/Downloads/WorkplaceTest.json"  # or "your_dataset.jsonl"
+    dataset_path = "/Users/david/Downloads/LibraryManagement.json"  # or "your_dataset.jsonl"
     
     # an example of a question
-    user_question = "Find the first and last names and email of employees working in the human resources department"
+    user_question = "how many books are to be returned in october but have not yet been returned"
     
     # make the SQL query using the fine-tuned model
     sql_query = inference_client.query(dataset_path, user_question)
@@ -180,3 +186,4 @@ if __name__ == "__main__":
     results = inference_client.run_query(sql_query)
     print("MySQL Query Results:")
     print(results)
+

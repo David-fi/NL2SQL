@@ -17,6 +17,8 @@ openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # the name of the model i fine tuned adn the paremeters to connect to a databsae server
 fine_tuned_model = "ft:gpt-4o-mini-2024-07-18:personal::B3lHt6V9"
+#fine_tuned_model = "o3-mini-2025-01-31"
+
 default_mysql_config = {
     "host": "localhost",
     "user": "root",
@@ -114,6 +116,13 @@ def upload_dataset():
         if err.errno == errorcode.ER_DB_CREATE_EXISTS:
             # Database already exists so flag remains False
             newDatabaseCreated = False
+            # Update the model client's configuration to use the existing database
+            model_client.mysql_config = {
+                "host": host,
+                "user": user,
+                "password": password,
+                "database": db_name
+            }
             return jsonify({
                 "message": f"Database '{db_name}' is already present and did not need to be uploaded. Continue with your question.",
                 "database": db_name,
