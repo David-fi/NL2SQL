@@ -160,3 +160,35 @@ INSERT INTO borrowers (borrower_id, first_name, last_name, membership_date, emai
 INSERT INTO loans (loan_id, book_id, borrower_id, loan_date, due_date, return_date) VALUES 
   (1, 1, 1, '2023-10-01', '2023-10-15', NULL),
   (2, 3, 2, '2023-09-20', '2023-10-04', '2023-09-30');
+
+-- Add more authors
+INSERT INTO authors (author_id, first_name, last_name, birth_date) VALUES
+  (3, 'Catherine', 'Green', '2001-02-10'),
+  (4, 'Stephen', 'King', '1947-09-21'),
+  (5, 'Mark', 'Twain', '1835-11-30');
+
+-- Add more books
+INSERT INTO books (book_id, title, author_id, genre, publish_date, available_copies) VALUES
+  (4, 'The Shining', 4, 'Horror', '1977-01-28', 2),
+  (5, 'Carrie', 4, 'Horror', '1974-04-05', 1),
+  (6, 'The Adventures of Tom Sawyer', 5, 'Adventure', '1876-06-09', 2),
+  (7, 'My Modern Novel', 3, 'Contemporary Fiction', '2021-08-15', 5),
+  (8, 'Untold Tales', 3, 'Mystery', '2022-12-10', 4),
+  (9, 'Never Borrowed', 4, 'Horror', '2000-01-01', 5),    -- This book will remain unborrowed
+  (10, 'It', 4, 'Horror', '1986-09-15', 4);
+
+-- Add more borrowers
+INSERT INTO borrowers (borrower_id, first_name, last_name, membership_date, email, phone) VALUES
+  (3, 'Charlie', 'Johnson', '2021-05-10', 'charlie.j@example.com', '333-444-5555'),
+  (4, 'Diana', 'White', '2023-09-01', 'diana.white@example.com', '444-555-6666'),
+  (5, 'Eric', 'Miller', '2021-12-25', 'eric.miller@example.com', '555-666-7777');
+
+-- Add more loans
+INSERT INTO loans (loan_id, book_id, borrower_id, loan_date, due_date, return_date) VALUES
+  (3, 2, 3, '2023-10-05', '2023-10-19', NULL),          -- Charlie borrowed "Animal Farm," not yet returned
+  (4, 4, 3, '2023-09-15', '2023-09-30', '2023-09-20'),  -- Charlie borrowed "The Shining," returned early
+  (5, 1, 2, '2023-10-12', '2023-10-26', NULL),          -- Bob borrowed "1984" again, not returned
+  (6, 5, 1, '2023-10-02', '2023-10-16', NULL),          -- Alice borrowed "Carrie," not returned
+  (7, 3, 4, '2023-10-10', '2023-10-24', '2023-10-20'),  -- Diana borrowed "Pride and Prejudice," returned
+  (8, 7, 5, '2023-01-15', '2023-01-29', NULL),          -- Eric borrowed "My Modern Novel," still out
+  (9, 10, 2, '2023-02-14', '2023-03-01', '2023-02-28'); -- Bob borrowed "It," returned
