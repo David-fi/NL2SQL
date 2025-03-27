@@ -524,6 +524,12 @@ function App() {
                       placeholder: "Enter your natural language query here...",
                       value: question,
                       onChange: (e) => setQuestion(e.target.value),
+                      onKeyDown: (e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSubmit(e);
+                        }
+                      },
                       rows: 4,
                       style: {
                         width: "90%",
