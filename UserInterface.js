@@ -27,12 +27,14 @@ function App() {
   
   // State to store the newDatabaseCreated flag from dataset upload
   const [newDatabaseCreated, setNewDatabaseCreated] = useState(false);
+  const [selectedSchemaFilters, setSelectedSchemaFilters] = useState([]);
 
   const [enableFormatting, setEnableFormatting] = useState(true);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [columnFilters, setColumnFilters] = useState({});
 
   const [schemaPreview, setSchemaPreview] = useState({});
+  const [showSchemaSidebar, setShowSchemaSidebar] = useState(true);
   const [autocompleteEnabled, setAutocompleteEnabled] = useState(true);
   
   // event handles
@@ -120,6 +122,7 @@ function App() {
         setError("");
         alert(data.message);
         setDataset(null);
+        setSchemaPreview({});
       }
     } catch (err) {
       setError(err.message);
@@ -323,6 +326,18 @@ function App() {
     localStorage.setItem("sortConfig", JSON.stringify(sortConfig));
   }, [sortConfig]);
 
+  const handleColumnClick = (col, table) => {
+    const filterText = `In the column ${col} of table ${table}`;
+    const updated = selectedSchemaFilters.includes(filterText)
+      ? selectedSchemaFilters
+      : [...selectedSchemaFilters, filterText];
+    setSelectedSchemaFilters(updated);
+    setQuestion(prev => {
+      const stripped = prev.replace(/^(From table .*?\.\s*)*(In the column .*?\.\s*)*/g, "").trim();
+      return `${updated.join(". ").replace(/\.\s/g, ". and ")}. ${stripped}`;
+    });
+  };
+
   return (
     <div style={{ 
       maxWidth: "1000px", 
@@ -480,11 +495,178 @@ function App() {
       </div>
     </div>
 
+      <div>
+      <button
+        onClick={() => setShowSchemaSidebar(!showSchemaSidebar)}
+        style={{
+          marginBottom: "10px",
+          backgroundColor: "#e0f7fa",
+          border: "1px solid #b2ebf2",
+          borderRadius: "20px",
+          padding: "6px 12px",
+          fontSize: "13px",
+          fontWeight: "500",
+          color: "#00796b",
+          cursor: "pointer",
+          transition: "background-color 0.2s ease-in-out"
+        }}
+        onMouseOver={(e) => (e.target.style.backgroundColor = "#b2ebf2")}
+        onMouseOut={(e) => (e.target.style.backgroundColor = "#e0f7fa")}
+      >
+        {showSchemaSidebar ? "Hide Schema Overview" : "Show Schema Overview"}
+      </button>
+      {selectedSchemaFilters.length > 0 && (
+        <button
+          onClick={() => {
+            setSelectedSchemaFilters([]);
+            setQuestion(prev => {
+              const allFilterPatterns = selectedSchemaFilters.map(f => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+              const combinedRegex = new RegExp(`\\b(${allFilterPatterns.join('|')})\\.\\s*`, "g");
+              return prev.replace(combinedRegex, "").trim();
+            });
+          }}
+          style={{
+            marginBottom: "10px",
+            backgroundColor: "#ffebee",
+            border: "1px solid #ef9a9a",
+            borderRadius: "20px",
+            padding: "6px 12px",
+            fontSize: "13px",
+            fontWeight: "500",
+            color: "#c62828",
+            cursor: "pointer",
+            transition: "background-color 0.2s ease-in-out"
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#ffcdd2")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#ffebee")}
+        >
+          Clear Schema Filters
+        </button>
+      )}
+        {showSchemaSidebar && (
+          <div style={{
+            border: "1px solid #ddd",
+            borderRadius: "10px",
+            padding: "15px",
+            backgroundColor: "#fff",
+            marginBottom: "20px",
+            maxHeight: "300px",
+            overflowY: "auto"
+          }}>
+            <h3 style={{ marginTop: 0 }}>📊 Schema Overview</h3>
+            {Object.keys(schemaPreview).length === 0 ? (
+              <p style={{ fontStyle: "italic", color: "#555" }}>
+                Please upload a dataset to view its structure.
+              </p>
+            ) : (
+              Object.entries(schemaPreview).map(([table, columns]) => (
+                <div key={table} style={{ marginBottom: "15px" }}>
+                  <h4
+                    style={{ marginBottom: "6px", color: "#1976d2", cursor: "pointer" }}
+                    onClick={() => {
+                      const filterText = `From table ${table}`;
+                    const updated = selectedSchemaFilters.includes(filterText)
+                      ? selectedSchemaFilters
+                      : [...selectedSchemaFilters, filterText];
+                      setSelectedSchemaFilters(updated);
+                      setQuestion(prev => {
+                        const stripped = prev.replace(/^(From table .*?\.\s*)*(In the column .*?\.\s*)*/g, "").trim();
+                        return `${updated.join(". ").replace(/\.\s/g, ". and ")}. ${stripped}`;
+                      });
+                    }}
+                  >
+                    📁 {table}
+                  </h4>
+                  <table style={{
+                    width: "100%",
+                    borderCollapse: "collapse",
+                    marginBottom: "10px"
+                  }}>
+                    <thead>
+                      <tr>
+                        <th style={{
+                          textAlign: "left",
+                          padding: "6px",
+                          borderBottom: "1px solid #ccc"
+                        }}>Column</th>
+                        <th style={{
+                          textAlign: "left",
+                          padding: "6px",
+                          borderBottom: "1px solid #ccc"
+                        }}>Examples</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(columns).map(([col, vals], idx) => (
+                        <tr key={idx}>
+                          <td
+                            style={{ padding: "6px", borderBottom: "1px solid #eee", cursor: "pointer", color: "#1976d2" }}
+                            onClick={() => handleColumnClick(col, table)}
+                          >
+                            {col}
+                          </td>
+                          <td
+                            style={{ padding: "6px", borderBottom: "1px solid #eee", color: "#555", cursor: "pointer" }}
+                            onClick={() => handleColumnClick(col, table)}
+                          >
+                            {vals.length > 0 ? vals.join(", ") : "No examples"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
       {/* Question Form Section */}
       <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
       <div>
         <label>Ask your question about the data bellow:</label>
         <div style={{ position: "relative" }}>
+          {selectedSchemaFilters.length > 0 && (
+            <div style={{ marginBottom: "10px", display: "flex", flexWrap: "wrap", gap: "8px" }}>
+              {selectedSchemaFilters.map((filter, index) => (
+                <span key={index} style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  backgroundColor: "#e0f7fa",
+                  borderRadius: "16px",
+                  padding: "6px 10px",
+                  fontSize: "13px",
+                  color: "#00796b",
+                  border: "1px solid #b2ebf2"
+                }}>
+              <span dangerouslySetInnerHTML={{ __html: filter }} />
+                  <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      const updated = selectedSchemaFilters.filter(f => f !== filter);
+                      setSelectedSchemaFilters(updated);
+                    setQuestion(prev => {
+                        const escaped = filter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const filterRegex = new RegExp(`\\b${escaped}\\.\\s*`, "g");
+                        return prev.replace(filterRegex, "").trim();
+                    });
+                    }}
+                    style={{
+                      marginLeft: "8px",
+                      backgroundColor: "transparent",
+                      border: "none",
+                      color: "#00796b",
+                      fontWeight: "bold",
+                      cursor: "pointer"
+                    }}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
           <Downshift
             onChange={selection => {
               const words = question.trim().split(" ");
