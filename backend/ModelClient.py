@@ -162,6 +162,7 @@ if __name__ == "__main__":
     
     # MySQL connection config
     mysql_config = {
+        '''
         "host": "localhost",
         "user": "root",
         "password": "",
@@ -171,8 +172,7 @@ if __name__ == "__main__":
         "host": "mysql",  # Changed from "localhost" to match Docker service name
         "user": "root",
         "password": "your_password",  # Replace with actual password defined in docker-compose
-        "database": "nl2sql_db"'
-        '''
+        "database": "nl2sql_db"
     }
     
     # instantiate the ModelClient
