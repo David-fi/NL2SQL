@@ -24,6 +24,12 @@ default_mysql_config = {
     "user": "root",
     "password": "",
     "database": "WorkplaceTest"
+    '''
+    "host": "mysql",  # Changed from "localhost" to match Docker service name
+    "user": "root",
+    "password": "your_password",  # Replace with actual password defined in docker-compose
+    "database": "nl2sql_db"'
+    '''
 }
 
 # Instantiate model client class which integrates the schema extraction and MySQL execution logic

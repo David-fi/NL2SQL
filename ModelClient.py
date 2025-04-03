@@ -166,6 +166,13 @@ if __name__ == "__main__":
         "user": "root",
         "password": "",
         "database": "LibraryManagement"
+        
+        '''
+        "host": "mysql",  # Changed from "localhost" to match Docker service name
+        "user": "root",
+        "password": "your_password",  # Replace with actual password defined in docker-compose
+        "database": "nl2sql_db"'
+        '''
     }
     
     # instantiate the ModelClient
