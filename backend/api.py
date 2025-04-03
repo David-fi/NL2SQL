@@ -20,6 +20,7 @@ fine_tuned_model = "ft:gpt-4o-mini-2024-07-18:personal::B3lHt6V9"
 #fine_tuned_model = "o3-mini-2025-01-31"
 
 default_mysql_config = {
+    '''
     "host": "localhost",
     "user": "root",
     "password": "",
@@ -28,8 +29,7 @@ default_mysql_config = {
     "host": "mysql",  # Changed from "localhost" to match Docker service name
     "user": "root",
     "password": "your_password",  # Replace with actual password defined in docker-compose
-    "database": "nl2sql_db"'
-    '''
+    "database": "nl2sql_db"
 }
 
 # Instantiate model client class which integrates the schema extraction and MySQL execution logic
