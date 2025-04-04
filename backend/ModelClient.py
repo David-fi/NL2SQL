@@ -169,9 +169,9 @@ if __name__ == "__main__":
         "database": "LibraryManagement"
         
         '''
-        "host": "mysql",  # Changed from "localhost" to match Docker service name
+        "host": "mysql", 
         "user": "root",
-        "password": "your_password",  # Replace with actual password defined in docker-compose
+        "password": "", 
         "database": "nl2sql_db"
     }
     

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_DATABASE: nl2sql_db
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - nl2sqlnet
+
+  backend:
+    build: ./backend
+    ports:
+      - "5001:5001"
+    depends_on:
+      - mysql
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./backend:/app
+    networks:
+      - nl2sqlnet
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+    networks:
+      - nl2sqlnet
+
+volumes:
+  mysql-data:
+
+networks:
+  nl2sqlnet:

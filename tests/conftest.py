@@ -88,7 +88,7 @@ def dummy_openai_client():
 
 @pytest.fixture(scope="session")
 def nl_to_sql_model(dummy_openai_client):
-    from ModelClient import ModelClient #imports the model client class where i connect the functions to translate nl to sql 
+    from backend.ModelClient import ModelClient #imports the model client class where i connect the functions to translate nl to sql 
     fake_model = "dummy-model" #dummy model identifier
     #some dummy mysql configurations
     dummy_mysql_config = {

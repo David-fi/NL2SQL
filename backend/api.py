@@ -28,7 +28,7 @@ default_mysql_config = {
     '''
     "host": "mysql",  # Changed from "localhost" to match Docker service name
     "user": "root",
-    "password": "your_password",  # Replace with actual password defined in docker-compose
+    "password": "",  # Replace with actual password defined in docker-compose
     "database": "nl2sql_db"
 }
 
