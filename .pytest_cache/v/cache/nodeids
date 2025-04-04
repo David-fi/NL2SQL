@@ -1,0 +1,7 @@
+[
+  "tests/test_execution.py::test_execute_invalid_sql",
+  "tests/test_execution.py::test_execute_valid_sql",
+  "tests/test_integration.py::test_end_to_end_query_execution",
+  "tests/test_translation.py::test_simple_select_translation[List the names and emails of all employees in the Human Resources department-SELECT first_name, last_name, email FROM employees WHERE department_id = (SELECT department_id FROM departments WHERE department_name = 'Human Resources');]",
+  "tests/test_translation.py::test_simple_select_translation[Show all customers-SELECT * FROM customers;]"
+]

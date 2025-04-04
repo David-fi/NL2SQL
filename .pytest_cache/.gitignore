@@ -1,0 +1,4 @@
+# Created by pytest automatically.
+.env
+__pycache__/
+node_modules/
