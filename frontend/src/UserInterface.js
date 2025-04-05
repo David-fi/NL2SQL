@@ -22,7 +22,7 @@ function App() {
   // States for phpMyAdmin credentials and controlling the credentials 
   const [phpHost, setPhpHost] = useState("localhost");
   const [phpUser, setPhpUser] = useState("root");
-  const [phpPassword, setPhpPassword] = useState("");
+  const [phpPassword, setPhpPassword] = useState("root");
   const [showCredentialsModal, setShowCredentialsModal] = useState(true);
   
   // State to store the newDatabaseCreated flag from dataset upload
@@ -63,8 +63,9 @@ function App() {
       formData.append("host", phpHost);
       formData.append("user", phpUser);
       formData.append("password", phpPassword);
+      setNewDatabaseCreated(false); // Reset before uploading new dataset
       
-      const response = await fetch("/api/upload-dataset", {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/upload-dataset`, {
         method: "POST",
         body: formData,
       });
@@ -78,11 +79,13 @@ function App() {
         setNewDatabaseCreated(data.newDatabaseCreated);
         const schemaForm = new FormData();
         schemaForm.append("dataset", dataset);
-        const previewResponse = await fetch("/api/schema-preview", {
+        const previewResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/schema-preview`, {
           method: "POST",
           body: schemaForm
         });
-        const previewData = await previewResponse.json();
+        const previewText = await previewResponse.text();
+        console.log("Raw preview response text:", previewText);
+        const previewData = JSON.parse(previewText);
         setSchemaPreview(previewData);
         alert(data.message);
       }
@@ -111,7 +114,7 @@ function App() {
       formData.append("password", phpPassword);
       formData.append("newDatabaseCreated", newDatabaseCreated);
       
-      const response = await fetch("/api/remove-dataset", {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/remove-dataset`, {
         method: "POST",
         body: formData,
       });
@@ -121,6 +124,7 @@ function App() {
       } else {
         setError("");
         alert(data.message);
+        setNewDatabaseCreated(false); // Reset after removal
         setDataset(null);
         setSchemaPreview({});
       }
@@ -159,7 +163,7 @@ function App() {
       formData.append("question", question);
 
       // Call API to generate SQL query
-      const genResponse = await fetch("/api/generate-query", {
+      const genResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/generate-query`, {
         method: "POST", //send a post request to the generate query api endepoint 
         body: formData,
       });
@@ -177,7 +181,9 @@ function App() {
         throw new Error(`Execute Query Error: ${errorMsg}`);
       }
       //update the generateSQL state to the response from the api
-      const genData = await genResponse.json();
+      const genText = await genResponse.text();
+      console.log("Raw generate-query response:", genText);
+      const genData = JSON.parse(genText);
       // Check if the response is a clarification prompt
       if (genData.type === "clarification") {
         // Display clarifying question to the user
@@ -188,7 +194,7 @@ function App() {
         setGeneratedSQL(sqlQuery);
   
         // Call API to execute the generated SQL query
-        const execResponse = await fetch("/api/execute-query", {
+        const execResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/execute-query`, {
           method: "POST", //send a post to the execute query endpoint woth the generated sql 
           headers: {
             "Content-Type": "application/json",
@@ -235,7 +241,7 @@ function App() {
       formData.append("dataset", dataset);
       formData.append("question", updatedQuestion);
 
-      const genResponse = await fetch("/api/generate-query", {
+      const genResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/generate-query`, {
         method: "POST",
         body: formData,
       });
@@ -252,7 +258,7 @@ function App() {
         const sqlQuery = genData.query;
         setGeneratedSQL(sqlQuery);
 
-        const execResponse = await fetch("/api/execute-query", {
+        const execResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/execute-query`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -289,7 +295,7 @@ function App() {
     setError("");
     setLoading(true);
     try {
-      const execResponse = await fetch("/api/execute-query", {
+      const execResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/execute-query`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
