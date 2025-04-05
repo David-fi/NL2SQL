@@ -22,10 +22,10 @@ fine_tuned_model = "ft:gpt-4o-mini-2024-07-18:personal::B3lHt6V9"
 #fine_tuned_model = "o3-mini-2025-01-31"
 
 default_mysql_config = {
-    "host": "mysql", 
-    "user": "root",
-    "password": "root",
-    "database": "nl2sql_db"
+    "host": os.environ.get("DB_HOST", "mysql"),
+    "user": os.environ.get("DB_USER", "root"),
+    "password": os.environ.get("DB_PASSWORD", "root"),
+    "database": os.environ.get("DB_NAME", "nl2sql_db")
 }
 
 # Instantiate model client class which integrates the schema extraction and MySQL execution logic
