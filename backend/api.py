@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
 from ModelClient import ModelClient, SchemaMismatchError, InvalidQueryError
 from openai import OpenAI
@@ -11,6 +12,7 @@ from mysql.connector import errorcode
 import json
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:3000"])
 
 # Initialise open ai client 
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -20,15 +22,9 @@ fine_tuned_model = "ft:gpt-4o-mini-2024-07-18:personal::B3lHt6V9"
 #fine_tuned_model = "o3-mini-2025-01-31"
 
 default_mysql_config = {
-    '''
-    "host": "localhost",
+    "host": "mysql", 
     "user": "root",
-    "password": "",
-    "database": "WorkplaceTest"
-    '''
-    "host": "mysql",  # Changed from "localhost" to match Docker service name
-    "user": "root",
-    "password": "",  # Replace with actual password defined in docker-compose
+    "password": "root",
     "database": "nl2sql_db"
 }
 
@@ -56,7 +52,7 @@ def generate_query():
         return jsonify({"type": "error", "message": str(sme)}), 400
     except Exception as e:
         logging.error("Unhandled error during query generation", exc_info=True)
-        return f"Generate Query Error: {str(e)}", 500
+        return jsonify({"type": "error", "message": f"Generate Query Error: {str(e)}"}), 500
 
 
 @app.route('/api/execute-query', methods=['POST'])
@@ -81,6 +77,8 @@ def execute_query():
 def upload_dataset():
     # Get credentials from form data (or fallback to defaults)
     host = request.form.get("host", default_mysql_config["host"])
+    if host in ["localhost", "127.0.0.1"]:
+        host = "mysql"
     user = request.form.get("user", default_mysql_config["user"])
     password = request.form.get("password", default_mysql_config["password"])
     
@@ -160,6 +158,8 @@ def upload_dataset():
                 password=password,
                 database=db_name
             )
+            if not conn.is_connected():
+                return jsonify({"error": f"Failed to connect to MySQL database '{db_name}'. Please verify the server and database."}), 500
             cursor = conn.cursor()
             # Iterate through each record in the dataset JSON
             for record in data:
@@ -217,6 +217,8 @@ def upload_dataset():
 def remove_dataset():
     # Get credentials from form data
     host = request.form.get("host", default_mysql_config["host"])
+    if host in ["localhost", "127.0.0.1"]:
+        host = "mysql"
     user = request.form.get("user", default_mysql_config["user"])
     password = request.form.get("password", default_mysql_config["password"])
     
@@ -290,4 +292,4 @@ def schema_preview():
         return jsonify({"error": str(e)}), 500
     
 if __name__ == '__main__':
-    app.run(debug=True, port = 5001)
+    app.run(debug=True, host='0.0.0.0', port=5001)

@@ -162,13 +162,6 @@ if __name__ == "__main__":
     
     # MySQL connection config
     mysql_config = {
-        '''
-        "host": "localhost",
-        "user": "root",
-        "password": "",
-        "database": "LibraryManagement"
-        
-        '''
         "host": "mysql", 
         "user": "root",
         "password": "", 
