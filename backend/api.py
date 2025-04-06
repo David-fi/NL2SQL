@@ -10,6 +10,7 @@ load_dotenv()
 import mysql.connector
 from mysql.connector import errorcode
 import json
+from config import MySQLConfig
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"])
@@ -29,7 +30,7 @@ default_mysql_config = {
 }
 
 # Instantiate model client class which integrates the schema extraction and MySQL execution logic
-model_client = ModelClient(openai_client, fine_tuned_model, default_mysql_config)
+model_client = ModelClient(openai_client, fine_tuned_model)
 
 @app.route('/api/generate-query', methods=['POST'])
 def generate_query():
@@ -120,13 +121,8 @@ def upload_dataset():
         if err.errno == errorcode.ER_DB_CREATE_EXISTS:
             # Database already exists so flag remains False
             newDatabaseCreated = False
-            # Update the model client's configuration to use the existing database
-            model_client.mysql_config = {
-                "host": host,
-                "user": user,
-                "password": password,
-                "database": db_name
-            }
+            # Update MySQLConfig with the existing database credentials
+            MySQLConfig.update_config(host=host, user=user, password=password, database=db_name)
             return jsonify({
                 "message": f"Database '{db_name}' is already present and did not need to be uploaded. Continue with your question.",
                 "database": db_name,
@@ -142,12 +138,7 @@ def upload_dataset():
             conn.close()
 
     # Update the model client's configuration to use the new (or existing) database
-    model_client.mysql_config = {
-        "host": host,
-        "user": user,
-        "password": password,
-        "database": db_name
-    }
+    MySQLConfig.update_config(host=host, user=user, password=password, database=db_name)
     
     # Process dataset to generate and execute CREATE TABLE and INSERT queries so i can populate the database 
     if newDatabaseCreated:

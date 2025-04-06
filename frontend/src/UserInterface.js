@@ -22,7 +22,7 @@ function App() {
   // States for phpMyAdmin credentials and controlling the credentials 
   const [phpHost, setPhpHost] = useState("localhost");
   const [phpUser, setPhpUser] = useState("root");
-  const [phpPassword, setPhpPassword] = useState("root");
+  const [phpPassword, setPhpPassword] = useState("");
   const [showCredentialsModal, setShowCredentialsModal] = useState(true);
   
   // State to store the newDatabaseCreated flag from dataset upload

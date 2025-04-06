@@ -1,6 +1,7 @@
 from schemaExtract import extract_schema
 import mysql.connector
 import logging
+from config import MySQLConfig
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -13,7 +14,7 @@ class InvalidQueryError(Exception):
     pass
 
 class ModelClient:
-    def __init__(self, client, model, mysql_config):
+    def __init__(self, client, model):
         """
         Initialise
         parameters:
@@ -24,16 +25,17 @@ class ModelClient:
         """
         self.client = client
         self.model = model
-        self.mysql_config = mysql_config
+        
 
     def get_mysql_connection(self):
         #Establish and return a MySQL connection using the given configuration
         try:
+            config = MySQLConfig.get_config()
             conn = mysql.connector.connect(
-                host=self.mysql_config["host"],
-                user=self.mysql_config["user"],
-                password=self.mysql_config["password"],
-                database=self.mysql_config["database"]
+                host=config["host"],
+                user=config["user"],
+                password=config["password"],
+                database=config["database"]
             )
             return conn
         except mysql.connector.Error as err:
@@ -64,7 +66,7 @@ class ModelClient:
 
         schema_context = (
             f"{schema_context_raw}\n\n"
-            "You are an expert SQL generator. Based on the above schema, generate a valid SQL query that answers the user's request. "
+            "You are an expert SQL generator. Based on the above schema, generate a valid SQL query that answers the user's request. (do not use = 'NoneType' instead use IS NULL)"
             "However, if the user's query is ambiguous or refers to data not available in the schema, instead of a SQL query, "
             "output a clarifying question, pointing them in the right direction and asking the user for more details. ONLY output the SQL query or a clarifying question, nothing else."
         )
@@ -160,16 +162,8 @@ if __name__ == "__main__":
     fine_tuned_model = "ft:gpt-4o-mini-2024-07-18:personal::B3lHt6V9"
     #fine_tuned_model = "o3-mini-2025-01-31"
     
-    # MySQL connection config
-    mysql_config = {
-        "host": "mysql", 
-        "user": "root",
-        "password": "", 
-        "database": "nl2sql_db"
-    }
-    
     # instantiate the ModelClient
-    inference_client = ModelClient(client, fine_tuned_model, mysql_config)
+    inference_client = ModelClient(client, fine_tuned_model)
     
     # dataset path
     dataset_path = "/Users/david/Downloads/LibraryManagement.json"  # or "your_dataset.jsonl"
@@ -186,4 +180,5 @@ if __name__ == "__main__":
     results = inference_client.run_query(sql_query)
     print("MySQL Query Results:")
     print(results)
+
 
