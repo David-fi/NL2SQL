@@ -100,10 +100,10 @@ def get_mysql_connection():
     """
     try:
         conn = mysql.connector.connect(
-            host="localhost",         # e.g., "localhost"
-            user="root",              # your MySQL username
-            password="",              # your MySQL password
-            database="WorkplaceTest"  # your MySQL database name
+            host="localhost",         
+            user="root",              
+            password="",              
+            database="WorkplaceTest"  
         )
         logger.info("MySQL connection established.")
         return conn
@@ -178,33 +178,6 @@ def main():
         except Exception as e:
             logger.error(f"Error generating SQL: {e}")
             return ""
-"""
-    bleu_scores = []
-    conn = get_mysql_connection()
-    for ex in dev_examples:
-        prompt = ex["prompt"]
-        reference_sql = ex["completion"].strip()
-        generated_sql = generate_sql(prompt)
-        bleu = compute_bleu(reference_sql, generated_sql)
-        bleu_scores.append(bleu)
-        logger.debug(f"Prompt: {prompt}")
-        logger.debug(f"Reference SQL: {reference_sql}")
-        logger.debug(f"Generated SQL: {generated_sql}")
-        logger.debug(f"BLEU Score: {bleu}")
 
-        if conn:
-            ref_results = execute_sql(reference_sql, conn)
-            gen_results = execute_sql(generated_sql, conn)
-            logger.debug(f"Reference Results: {ref_results}")
-            logger.debug(f"Generated Results: {gen_results}")
-    if conn:
-        conn.close()
-
-    if bleu_scores:
-        avg_bleu = sum(bleu_scores) / len(bleu_scores)
-        logger.info(f"Average BLEU score on dev set: {avg_bleu}")
-    else:
-        logger.info("No BLEU scores computed.")
-"""
 if __name__ == "__main__":
     main()

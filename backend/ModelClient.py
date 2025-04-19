@@ -29,6 +29,7 @@ class ModelClient:
 
     def get_mysql_connection(self):
         #Establish and return a MySQL connection using the given configuration
+        #connect to the MySQL database with the deafault config
         try:
             config = MySQLConfig.get_config()
             conn = mysql.connector.connect(
@@ -63,7 +64,8 @@ class ModelClient:
         except Exception as e:
             logging.error("Error extracting schema", exc_info=True)
             raise SchemaMismatchError("Failed to extract schema from the dataset. Please ensure your file is in the correct format with the expected columns.")
-
+        
+        #composing the system prompt, the first part will be the schema of the connected db and the behaviour instructions
         schema_context = (
             f"{schema_context_raw}\n\n"
             "You are an expert SQL generator. Based on the above schema, generate a valid SQL query that answers the user's request. (do not use = 'NoneType' instead use IS NULL)"
@@ -96,7 +98,7 @@ class ModelClient:
         print("Model response:")
         print(response_text)
     
-        # if response starts with a phrase suggesting a clarification, treat it as ambiguous
+        # if response starts with a phrase suggesting a clarification, then it is ambiguous and we go through the proper flow to handle that
         clarification_indicators = ["could you", "can you", "please clarify", "which", "do you mean", "ambiguous"]
         is_clarification = any(response_text.lower().startswith(ind) for ind in clarification_indicators)
     
@@ -119,12 +121,12 @@ class ModelClient:
         conn = self.get_mysql_connection()
         if conn is None:
             return "MySQL connection failed."
-        # Validation layer: check for dangerous keywords if not confirmed.
+        # Validation layer: check for dangerous keywords if not confirmed
         if not confirmed:
             dangerous_keywords = ["DROP", "DELETE", "UPDATE", "INSERT", "ALTER", "TRUNCATE"]
             if any(keyword in sql_query_str.upper() for keyword in dangerous_keywords):
                 return {"type": "confirmation", "message": "Warning: This query may be destructive and cause irreversible changes to your data. Please confirm if you want to proceed."}
-        
+        #execute safely if confirmed that is the desired output
         try:
             cursor = conn.cursor()
             cursor.execute(sql_query_str)
@@ -138,7 +140,7 @@ class ModelClient:
             logging.error("Query execution error", exc_info=True)
             error_message = str(e)
             error_code = e.errno  # MySQL-specific error code
-
+            #expected MySQL errors are swappped for more user friendly messages
             if "ambiguous" in error_message.lower():
                 raise InvalidQueryError("The SQL query references a column that does not exist or is ambiguous. Please verify that your dataset contains the correct columns and that your query references them correctly.")
             elif error_code == 1064:
@@ -150,6 +152,8 @@ class ModelClient:
             else:
              raise Exception("A system error occurred during query execution. Please try again.")            
             
+
+#for testinf during sprint 2 to check work flows and that everything is ready to move forward
 if __name__ == "__main__":
     import os
     from openai import OpenAI

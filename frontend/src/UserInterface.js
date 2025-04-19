@@ -28,11 +28,10 @@ function App() {
   // State to store the newDatabaseCreated flag from dataset upload
   const [newDatabaseCreated, setNewDatabaseCreated] = useState(false);
   const [selectedSchemaFilters, setSelectedSchemaFilters] = useState([]);
-
+  // states for the toggling of the user formats
   const [enableFormatting, setEnableFormatting] = useState(true);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [columnFilters, setColumnFilters] = useState({});
-
   const [schemaPreview, setSchemaPreview] = useState({});
   const [showSchemaSidebar, setShowSchemaSidebar] = useState(true);
   const [autocompleteEnabled, setAutocompleteEnabled] = useState(true);
@@ -42,6 +41,7 @@ function App() {
     setDataset(e.target.files[0]); //updata the dataset state with the file which is uploaed in the upload section
   };
 
+  // table sorting helper 
   const handleSort = (key) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
@@ -58,7 +58,7 @@ function App() {
     }
     setLoading(true);
     try {
-      const formData = new FormData();
+      const formData = new FormData(); //bundle the file and credentials for POST
       formData.append("dataset", dataset);
       formData.append("host", phpHost);
       formData.append("user", phpUser);
@@ -75,6 +75,7 @@ function App() {
         setDataset(null); // Clear the invalid dataset
         return;
       } else {
+        // grab the an overview of the scheam for the the sidebar
         setError("");
         setNewDatabaseCreated(data.newDatabaseCreated);
         const schemaForm = new FormData();
@@ -103,7 +104,7 @@ function App() {
       return;
     }
     if (!window.confirm("Are you sure you want to remove the dataset? This will drop the database if it was created by this system.")) {
-      return;
+      return; //bail if the user backs out of removing the dataset
     }
     setLoading(true);
     try {
@@ -340,7 +341,7 @@ function App() {
     setSelectedSchemaFilters(updated);
     setQuestion(prev => {
       const stripped = prev.replace(/^(From table .*?\.\s*)*(In the column .*?\.\s*)*/g, "").trim();
-      return `${updated.join(". ").replace(/\.\s/g, ". and ")}. ${stripped}`;
+      return `${updated.join(". ")}. ${stripped}`;
     });
   };
 
@@ -575,9 +576,9 @@ function App() {
                       ? selectedSchemaFilters
                       : [...selectedSchemaFilters, filterText];
                       setSelectedSchemaFilters(updated);
-                      setQuestion(prev => {
+                    setQuestion(prev => {
                         const stripped = prev.replace(/^(From table .*?\.\s*)*(In the column .*?\.\s*)*/g, "").trim();
-                        return `${updated.join(". ").replace(/\.\s/g, ". and ")}. ${stripped}`;
+                        return `${updated.join(". ")}. ${stripped}`;
                       });
                     }}
                   >
