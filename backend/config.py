@@ -3,13 +3,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-class MySQLConfig:
+#access all the DB connection settings by calling this class
+class MySQLConfig: 
     host = os.getenv("DB_HOST", "localhost")
     user = os.getenv("DB_USER", "root")
     password = os.getenv("DB_PASSWORD", "")
     database = os.getenv("DB_NAME", "nl2sqldatabase")
 
-    @classmethod
+    @classmethod #helper 
     def get_config(cls):
         return {
             "host": cls.host,
@@ -19,7 +20,8 @@ class MySQLConfig:
         }
 
     @classmethod
-    def update_config(cls, host=None, user=None, password=None, database=None):
+    def update_config(cls, host=None, user=None, password=None, database=None): 
+        #if the credentials are changed 
         if host is not None:
             cls.host = host
         if user is not None:

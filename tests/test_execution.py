@@ -13,7 +13,7 @@ def test_execute_valid_sql():
     conn.commit()
     query = "SELECT * FROM test_table;"
     results = execute_sql(query, conn)
-    # Assert that the returned results match the expected data a list with one tuple containing (1, 'Alice')
+    # Assert that the returned results match the expected datat a list with one tuple containing (1, 'Alice')
     assert results == [(1, 'Alice')]
     cursor.close()
     conn.close()
