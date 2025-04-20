@@ -110,6 +110,8 @@ def pytest_runtest_logreport(report):
         })
 
 def pytest_terminal_summary(terminalreporter, exitstatus, config):
+
+    #this function here writes the results of the tests into a mysql table for me to see the results in there 
     host = config.getoption("--db_host")
     user = config.getoption("--db_user")
     password = config.getoption("--db_password")
