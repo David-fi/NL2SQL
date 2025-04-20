@@ -4,9 +4,12 @@ import random
 import logging
 import mysql.connector
 from dotenv import load_dotenv, find_dotenv
+from nltk.translate.bleu_score import sentence_bleu
 
-
+from openai import OpenAI
+# Load environment from project root .env before using it
 load_dotenv(find_dotenv())
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 logging.basicConfig(
     level=logging.DEBUG, 
