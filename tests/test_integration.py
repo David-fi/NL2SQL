@@ -2,7 +2,7 @@ import pytest
 import io
 import mysql.connector
 
-# Fixture to set up a test Orders table with known data.
+#set up a test Orders table with known data.
 @pytest.fixture(scope="module")
 def setup_test_db():
     conn = mysql.connector.connect(host="localhost", user="root", password="", database="WorkplaceTest")

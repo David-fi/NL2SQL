@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 MODEL_NAME = "gpt-4o-mini-2024-07-18"
 
 # Directories and file paths
-DATA_DIR = '/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/dataSets'
+DATA_DIR = '/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/NL2SQL/dataSets'
 PREPROCESSED_FILE = os.path.join(DATA_DIR, "preprocessed_data.jsonl")
 TRAIN_SPLIT_FILE = os.path.join(DATA_DIR, "train.jsonl")
 VAL_SPLIT_FILE = os.path.join(DATA_DIR, "dev.jsonl")

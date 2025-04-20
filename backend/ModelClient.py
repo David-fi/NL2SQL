@@ -1,16 +1,16 @@
-from backend.schemaExtract import extract_schema
+from schemaExtract import extract_schema
 import mysql.connector
 import logging
-from backend.config import MySQLConfig
+from config import MySQLConfig
 
 logging.basicConfig(level=logging.ERROR)
 
 class SchemaMismatchError(Exception):
-    #Raised when the dataset schema does not match the expected format.
+    #raised when the dataset schema does not match the expected format.
     pass
 
 class InvalidQueryError(Exception):
-    #Raised when the SQL query is invalid or ambiguous.
+    #raised when the SQL query is invalid or ambiguous.
     pass
 
 class ModelClient:
@@ -29,7 +29,7 @@ class ModelClient:
         
 
     def get_mysql_connection(self):
-        #Establish and return a MySQL connection using the given configuration
+        #establish and return a MySQL connection using the given configuration
         #connect to the MySQL database with the deafault config
         try:
             config = self.mysql_config if self.mysql_config is not None else MySQLConfig.get_config()
@@ -46,7 +46,7 @@ class ModelClient:
 
     def query(self, dataset, user_question, max_tokens=150, temperature=0.0, stop=None, filename=None):
         """
-        Extract the schema from the dataset (file path or uploaded file), append it to the system message to give context 
+        extract the schema from the dataset (file path or uploaded file), append it to the system message to give context 
         then ask the model for a SQL query based on the user's question.
         parameters:
         dataset: File path OR uploaded file object

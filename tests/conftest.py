@@ -3,6 +3,10 @@ import mysql.connector
 import logging
 import json
 
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend')))
+
 # Configure structured logging to file
 logger = logging.getLogger("nl2sql_tests")
 logger.setLevel(logging.INFO) #record info, warning, error and critical messages
@@ -88,7 +92,7 @@ def dummy_openai_client():
 
 @pytest.fixture(scope="session")
 def nl_to_sql_model(dummy_openai_client):
-    from backend.ModelClient import ModelClient #imports the model client class where i connect the functions to translate nl to sql 
+    from ModelClient import ModelClient #imports the model client class where i connect the functions to translate nl to sql 
     fake_model = "dummy-model" #dummy model identifier
     #some dummy mysql configurations
     dummy_mysql_config = {
@@ -99,7 +103,7 @@ def nl_to_sql_model(dummy_openai_client):
     }
     return ModelClient(dummy_openai_client, fake_model, dummy_mysql_config)
 
-# Pytest hook to record test outcome after each test call
+# pytest hook to record test outcome after each test call
 def pytest_runtest_logreport(report):
     if report.when == "call": #check if the report and the call correspond
         outcome = "passed" if report.passed else "failed" #the determiner for fail or pass

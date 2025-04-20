@@ -1,6 +1,3 @@
-# NL2SQL Assistant
-
-
 # NL2SQL Natural Language to SQL Interface
 
 the project allows users to upload a json dataset and ask questions in plain English. Using a fine-tuned OpenAI model, it generates corresponding SQL queries and executes them on a live MySQL database. The project includes schema previewing, query clarification, and execution safety features. 
@@ -56,7 +53,8 @@ This project is Dockerised for reproducibility. To install and run:
 OPENAI_API_KEY= (in the environment file)
 
 In the root of the project (where docker-compose.yml is), run:
+
 docker-compose up --build
 
 	•	Frontend: http://localhost:3000
-	•	Backend API (for testing): http://localhost:5001
+

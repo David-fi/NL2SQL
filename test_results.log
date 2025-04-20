@@ -8,3 +8,4 @@ Error logging test results to MySQL: 1406 (22001): Data too long for column 'tes
 Error logging test results to MySQL: 1406 (22001): Data too long for column 'test_case_id' at row 1
 Error logging test results to MySQL: 1406 (22001): Data too long for column 'test_case_id' at row 1
 Error logging test results to MySQL: 1406 (22001): Data too long for column 'test_case_id' at row 1
+Error logging test results to MySQL: 1406 (22001): Data too long for column 'test_case_id' at row 1

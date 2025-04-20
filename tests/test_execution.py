@@ -7,13 +7,13 @@ def test_execute_valid_sql():
     """
     conn = get_mysql_connection()
     cursor = conn.cursor()
-    # Create a temporary table and insert one record
+    # create a temporary table and insert one record
     cursor.execute("CREATE TEMPORARY TABLE test_table (id INT, name VARCHAR(50));")
     cursor.execute("INSERT INTO test_table (id, name) VALUES (1, 'Alice');")
     conn.commit()
     query = "SELECT * FROM test_table;"
     results = execute_sql(query, conn)
-    # Assert that the returned results match the expected datat a list with one tuple containing (1, 'Alice')
+    # assert that the returned results match the expected datat a list with one tuple containing (1, 'Alice')
     assert results == [(1, 'Alice')]
     cursor.close()
     conn.close()
