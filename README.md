@@ -43,7 +43,7 @@ NL2SQL/
     docker-compose.yml        # launches MySQL, backend, and frontend as services
     README.md                 # this file
     SQLCode         # containing the sql for test schema setup
-
+    WorkplaceTest.json        #this file is used in the pytests, it is a json file of one of the test datasets defined in the SQLCode module
 
 --
 
