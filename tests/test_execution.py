@@ -1,5 +1,5 @@
 import pytest
-from modelDevelopment import execute_sql, get_mysql_connection
+from modelTraining.modelDevelopment import execute_sql, get_mysql_connection
 
 def test_execute_valid_sql():
     """

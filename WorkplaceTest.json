@@ -1,0 +1,43 @@
+[
+{"type":"header","version":"5.2.1","comment":"Export to JSON plugin for PHPMyAdmin"},
+{"type":"database","name":"WorkplaceTest"},
+{"type":"table","name":"customers","database":"WorkplaceTest","data":
+[
+{"customer_id":"201","first_name":"Alice","last_name":"Johnson","email":"alice.johnson@example.com","phone":"345-678-9012","address":"123 Main St","city":"Metropolis","state":"NY","zip_code":"10001"},
+{"customer_id":"202","first_name":"Bob","last_name":"Williams","email":"bob.williams@example.com","phone":"456-789-0123","address":"456 Elm St","city":"Gotham","state":"NJ","zip_code":"07001"}
+]
+}
+,{"type":"table","name":"departments","database":"WorkplaceTest","data":
+[
+{"department_id":"1","department_name":"Human Resources","location":"New York"},
+{"department_id":"2","department_name":"Engineering","location":"San Francisco"},
+{"department_id":"3","department_name":"Marketing","location":"Chicago"}
+]
+}
+,{"type":"table","name":"employees","database":"WorkplaceTest","data":
+[
+{"employee_id":"101","first_name":"John","last_name":"Doe","department_id":"2","email":"john.doe@example.com","phone":"123-456-7890","hire_date":"2021-06-15"},
+{"employee_id":"102","first_name":"Jane","last_name":"Smith","department_id":"1","email":"jane.smith@example.com","phone":"234-567-8901","hire_date":"2020-03-01"}
+]
+}
+,{"type":"table","name":"orders","database":"WorkplaceTest","data":
+[
+{"order_id":"301","customer_id":"201","order_date":"2023-09-01","total_amount":"899.98"},
+{"order_id":"302","customer_id":"202","order_date":"2023-09-02","total_amount":"1299.99"}
+]
+}
+,{"type":"table","name":"products","database":"WorkplaceTest","data":
+[
+{"product_id":"1","product_name":"Smartphone","category":"Electronics","price":"699.99","stock":"50"},
+{"product_id":"2","product_name":"Laptop","category":"Electronics","price":"1299.99","stock":"30"},
+{"product_id":"3","product_name":"Headphones","category":"Accessories","price":"199.99","stock":"100"}
+]
+}
+,{"type":"table","name":"salaries","database":"WorkplaceTest","data":
+[
+{"salary_id":"1","employee_id":"101","amount":"80000.00","effective_date":"2021-06-15"},
+{"salary_id":"2","employee_id":"101","amount":"85000.00","effective_date":"2022-06-15"},
+{"salary_id":"3","employee_id":"102","amount":"75000.00","effective_date":"2020-03-01"}
+]
+}
+]

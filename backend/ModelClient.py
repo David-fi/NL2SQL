@@ -1,7 +1,7 @@
-from schemaExtract import extract_schema
+from backend.schemaExtract import extract_schema
 import mysql.connector
 import logging
-from config import MySQLConfig
+from backend.config import MySQLConfig
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -14,24 +14,25 @@ class InvalidQueryError(Exception):
     pass
 
 class ModelClient:
-    def __init__(self, client, model):
+    def __init__(self, client, model, mysql_config=None):
         """
         Initialise
         parameters:
-        client: he OpenAI client
+        client: the OpenAI client
         model: name of fine-tuned model 
         mysql_config: dictionary with MySQL connection parameters
                     
         """
         self.client = client
         self.model = model
+        self.mysql_config = mysql_config
         
 
     def get_mysql_connection(self):
         #Establish and return a MySQL connection using the given configuration
         #connect to the MySQL database with the deafault config
         try:
-            config = MySQLConfig.get_config()
+            config = self.mysql_config if self.mysql_config is not None else MySQLConfig.get_config()
             conn = mysql.connector.connect(
                 host=config["host"],
                 user=config["user"],
@@ -170,7 +171,7 @@ if __name__ == "__main__":
     inference_client = ModelClient(client, fine_tuned_model)
     
     # dataset path
-    dataset_path = "/Users/david/Downloads/LibraryManagement.json"  # or "your_dataset.jsonl"
+    dataset_path = "/Users/david/Downloads/WorkplaceTest.json"  # or "your_dataset.jsonl"
     
     # an example of a question
     user_question = "how many books are to be returned in october but have not yet been returned"

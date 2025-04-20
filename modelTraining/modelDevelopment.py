@@ -3,11 +3,10 @@ import json
 import random
 import logging
 import mysql.connector
+from dotenv import load_dotenv, find_dotenv
 
-from openai import OpenAI
- #as per OpenAI documentation this is the key to do thinds like file uploads, fine-tuning jobs, and completions.
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-from nltk.translate.bleu_score import sentence_bleu
+
+load_dotenv(find_dotenv())
 
 logging.basicConfig(
     level=logging.DEBUG, 
