@@ -3,11 +3,11 @@ import os
 import logging
 
 # Directories for the datasets
-SPIDER_DIR = "/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/dataSets/spider_data"
-WIKISQL_DIR = "/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/dataSets/wikiSQL"
+SPIDER_DIR = "/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/NL2SQL/dataSets/spider_data"
+WIKISQL_DIR = "/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/NL2SQL/dataSets/wikiSQL"
 
 # Output location for preprocessed data
-OUTPUT_DATA_PATH = "/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/dataSets/preprocessed_data.jsonl"
+OUTPUT_DATA_PATH = "/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/NL2SQL/dataSets/preprocessed_data.jsonl"
 
 # Set up logging to help debugginh and tracking the script process 
 logging.basicConfig(

@@ -14,9 +14,9 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 #Configuration
 
 MODEL_NAME = "ft:gpt-4o-mini-2024-07-18:personal::B3lHt6V9"
-VALIDATION_FILE = "/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/dataSets/test.jsonl"  
-RESULTS_FILE = "/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/dataSets/results.jsonl" 
-SUMMARY_FILE = "/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/dataSets/evaluation_summary.json" 
+VALIDATION_FILE = "/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/NL2SQL/dataSets/test.jsonl"  
+RESULTS_FILE = "/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/NL2SQL/dataSets/results.jsonl" 
+SUMMARY_FILE = "/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/NL2SQL/dataSets/evaluation_summary.json" 
 SLEEP_BETWEEN_CALLS = 0  # Delay in seconds between API calls 
 
 # This is the standard set of keywords
