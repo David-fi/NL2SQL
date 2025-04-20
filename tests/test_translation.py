@@ -21,7 +21,7 @@ def test_simple_select_translation(nl_to_sql_model, user_query, expected_sql):
     based on the actual schema from WorkplaceTest.json.
     """
     import io
-    # Create a dummy schema file from WorkplaceTest.json
+    # create a dummy schema file from WorkplaceTest.json
     with open("WorkplaceTest.json", "r", encoding="utf-8") as f:
         schema_content = f.read()
     dummy_file = io.StringIO(schema_content)

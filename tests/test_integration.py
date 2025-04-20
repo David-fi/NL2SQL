@@ -15,7 +15,7 @@ def setup_test_db():
             order_date DATE
         );
     """)
-    # Insert some known test data: one order in 2020 and one in 2021
+    # insert some known test data: one order in 2020 and one in 2021
     cursor.execute("INSERT INTO Orders (order_id, order_date) VALUES (1, '2020-05-15');")
     cursor.execute("INSERT INTO Orders (order_id, order_date) VALUES (2, '2021-07-20');")
     conn.commit()
@@ -31,7 +31,7 @@ def test_end_to_end_query_execution(nl_to_sql_model, setup_test_db):
     End-to-end test so given a natural language query, the model returns SQL,
     which is then executed on the test Orders table
     """
-    # Create a dummy JSON schema file for the Orders table
+    # create a dummy JSON schema file for the Orders table
     dummy_schema_json = '[{"type": "table", "name": "Orders", "data": [{"order_id": 1, "order_date": "2020-05-15"}]}]'
     dummy_file = io.StringIO(dummy_schema_json)
     user_query = "How many orders were placed in 2020?"
@@ -39,7 +39,7 @@ def test_end_to_end_query_execution(nl_to_sql_model, setup_test_db):
     assert response.get("type") == "sql"
     generated_sql = response.get("query")
     
-    # Execute the generated SQL against the test database
+    # execute the generated SQL against the test database
     cursor = setup_test_db.cursor()
     cursor.execute(generated_sql)
     results = cursor.fetchall()

@@ -3,7 +3,7 @@ from modelTraining.modelDevelopment import execute_sql, get_mysql_connection
 
 def test_execute_valid_sql():
     """
-    Test executing a valid SQL query on a temporary table.
+    test executing a valid SQL query on a temporary table
     """
     conn = get_mysql_connection()
     cursor = conn.cursor()
@@ -20,11 +20,11 @@ def test_execute_valid_sql():
 
 def test_execute_invalid_sql():
     """
-    Test executing an invalid SQL query that should be caught and returned as an error string.
+    test executing an invalid SQL query that should be caught and returned as an error string
     """
     conn = get_mysql_connection()
     query = "SELECT * FROM non_existent_table;"
     result = execute_sql(query, conn)
-    # The function should return a string with an error message
+    # the function should return a string with an error message
     assert isinstance(result, str) and "non_existent_table" in result.lower()
     conn.close() 
