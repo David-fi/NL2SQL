@@ -55,7 +55,7 @@ OPENAI_API_KEY= (in the environment file)
 
 In the root of the project (where docker-compose.yml is), run:
 
-docker-compose up --build
+docker-compose down -v && docker-compose up --build
 
 	•	Frontend: http://localhost:3000
 
@@ -77,11 +77,13 @@ WorkplaceTest.json:
 
     What is employee John Doe’s email address and phone number?
 
-    For every department, show the total number of employees it currently has, sorted from the largest staff to the smallest (Result doesnt acturally sort because the number in both is one but the sql generated is (in my tests) accurate)
+    For every department, show the total number of employees it currently has, sorted from the largest staff to the smallest 
+    (Result doesnt acturally sort because the number in both is one but the sql generated is (in my tests) accurate)
 
     List the departments that do not have any employees assigned yet
 
-    (to get a clarrification model): what is bobs number 
+    (to get a clarrification model): 
+    what is bobs number 
 
 LibraryManagement.json (more complex questions):
 
