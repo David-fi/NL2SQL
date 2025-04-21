@@ -1,0 +1,49 @@
+[
+{"type":"header","version":"5.2.1","comment":"Export to JSON plugin for PHPMyAdmin"},
+{"type":"database","name":"LibraryManagement"},
+{"type":"table","name":"authors","database":"LibraryManagement","data":
+[
+{"author_id":"1","first_name":"George","last_name":"Orwell","birth_date":"1903-06-25"},
+{"author_id":"2","first_name":"Jane","last_name":"Austen","birth_date":"1775-12-16"},
+{"author_id":"3","first_name":"Catherine","last_name":"Green","birth_date":"2001-02-10"},
+{"author_id":"4","first_name":"Stephen","last_name":"King","birth_date":"1947-09-21"},
+{"author_id":"5","first_name":"Mark","last_name":"Twain","birth_date":"1835-11-30"}
+]
+}
+,{"type":"table","name":"books","database":"LibraryManagement","data":
+[
+{"book_id":"1","title":"1984","author_id":"1","genre":"Dystopian","publish_date":"1949-06-08","available_copies":"5"},
+{"book_id":"2","title":"Animal Farm","author_id":"1","genre":"Political Satire","publish_date":"1945-08-17","available_copies":"3"},
+{"book_id":"3","title":"Pride and Prejudice","author_id":"2","genre":"Romance","publish_date":"1813-01-28","available_copies":"4"},
+{"book_id":"4","title":"The Shining","author_id":"4","genre":"Horror","publish_date":"1977-01-28","available_copies":"2"},
+{"book_id":"5","title":"Carrie","author_id":"4","genre":"Horror","publish_date":"1974-04-05","available_copies":"1"},
+{"book_id":"6","title":"The Adventures of Tom Sawyer","author_id":"5","genre":"Adventure","publish_date":"1876-06-09","available_copies":"2"},
+{"book_id":"7","title":"My Modern Novel","author_id":"3","genre":"Contemporary Fiction","publish_date":"2021-08-15","available_copies":"5"},
+{"book_id":"8","title":"Untold Tales","author_id":"3","genre":"Mystery","publish_date":"2022-12-10","available_copies":"4"},
+{"book_id":"9","title":"Never Borrowed","author_id":"4","genre":"Horror","publish_date":"2000-01-01","available_copies":"5"},
+{"book_id":"10","title":"It","author_id":"4","genre":"Horror","publish_date":"1986-09-15","available_copies":"4"}
+]
+}
+,{"type":"table","name":"borrowers","database":"LibraryManagement","data":
+[
+{"borrower_id":"1","first_name":"Alice","last_name":"Brown","membership_date":"2023-01-15","email":"alice.brown@example.com","phone":"111-222-3333"},
+{"borrower_id":"2","first_name":"Bob","last_name":"Smith","membership_date":"2022-09-05","email":"bob.smith@example.com","phone":"222-333-4444"},
+{"borrower_id":"3","first_name":"Charlie","last_name":"Johnson","membership_date":"2021-05-10","email":"charlie.j@example.com","phone":"333-444-5555"},
+{"borrower_id":"4","first_name":"Diana","last_name":"White","membership_date":"2023-09-01","email":"diana.white@example.com","phone":"444-555-6666"},
+{"borrower_id":"5","first_name":"Eric","last_name":"Miller","membership_date":"2021-12-25","email":"eric.miller@example.com","phone":"555-666-7777"}
+]
+}
+,{"type":"table","name":"loans","database":"LibraryManagement","data":
+[
+{"loan_id":"1","book_id":"1","borrower_id":"1","loan_date":"2023-10-01","due_date":"2023-10-15","return_date":null},
+{"loan_id":"2","book_id":"3","borrower_id":"2","loan_date":"2023-09-20","due_date":"2023-10-04","return_date":"2023-09-30"},
+{"loan_id":"3","book_id":"2","borrower_id":"3","loan_date":"2023-10-05","due_date":"2023-10-19","return_date":null},
+{"loan_id":"4","book_id":"4","borrower_id":"3","loan_date":"2023-09-15","due_date":"2023-09-30","return_date":"2023-09-20"},
+{"loan_id":"5","book_id":"1","borrower_id":"2","loan_date":"2023-10-12","due_date":"2023-10-26","return_date":null},
+{"loan_id":"6","book_id":"5","borrower_id":"1","loan_date":"2023-10-02","due_date":"2023-10-16","return_date":null},
+{"loan_id":"7","book_id":"3","borrower_id":"4","loan_date":"2023-10-10","due_date":"2023-10-24","return_date":"2023-10-20"},
+{"loan_id":"8","book_id":"7","borrower_id":"5","loan_date":"2023-01-15","due_date":"2023-01-29","return_date":null},
+{"loan_id":"9","book_id":"10","borrower_id":"2","loan_date":"2023-02-14","due_date":"2023-03-01","return_date":"2023-02-28"}
+]
+}
+]

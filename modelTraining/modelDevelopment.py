@@ -28,7 +28,7 @@ MODEL_NAME = "gpt-4o-mini-2024-07-18"
 DATA_DIR = '/Users/david/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents – David’s MacBook Pro/university/year 3/Individual Project/NL2SQL/dataSets'
 PREPROCESSED_FILE = os.path.join(DATA_DIR, "preprocessed_data.jsonl")
 TRAIN_SPLIT_FILE = os.path.join(DATA_DIR, "train.jsonl")
-VAL_SPLIT_FILE = os.path.join(DATA_DIR, "dev.jsonl")
+VAL_SPLIT_FILE = os.path.join(DATA_DIR, "val.jsonl")
 TEST_SPLIT_FILE = os.path.join(DATA_DIR, "test.jsonl")
 OUTPUT_TRAINING_FILE = os.path.join(DATA_DIR, "openai_train.jsonl")  # File for fine-tuning
 
@@ -53,7 +53,7 @@ def load_preprocessed_data(filepath):
 
 def split_dataset(examples, train_ratio=0.8, dev_ratio=0.1, test_ratio=0.1, seed=42):
     """
-    Randomly splits examples into train, dev, and test sets
+    Randomly splits examples into train, val, and test sets
     used a seed to be able to reproduce the split
     """
     if seed is not None:
@@ -121,10 +121,10 @@ def main():
     logger.info(f"Loaded {len(all_examples)} examples from preprocessed data.")
 
     # Split the dataset
-    train_examples, dev_examples, test_examples = split_dataset(all_examples)
-    logger.info(f"Dataset split: {len(train_examples)} train, {len(dev_examples)} dev, {len(test_examples)} test examples.")
+    train_examples, val_examples, test_examples = split_dataset(all_examples)
+    logger.info(f"Dataset split: {len(train_examples)} train, {len(val_examples)} dev, {len(test_examples)} test examples.")
     write_jsonl(train_examples, TRAIN_SPLIT_FILE)
-    write_jsonl(dev_examples, VAL_SPLIT_FILE)
+    write_jsonl(val_examples, VAL_SPLIT_FILE)
     write_jsonl(test_examples, TEST_SPLIT_FILE)
 
     # Use the training examples directly as the fine-tuning file

@@ -100,7 +100,7 @@ class ModelClient:
         print(response_text)
     
         # if response starts with a phrase suggesting a clarification, then it is ambiguous and we go through the proper flow to handle that
-        clarification_indicators = ["could you", "can you", "please clarify", "which", "do you mean", "ambiguous"]
+        clarification_indicators = ["could you", "can you", "please clarify", "which", "do you mean", "ambiguous", "what"]
         is_clarification = any(response_text.lower().startswith(ind) for ind in clarification_indicators)
     
         if is_clarification:
